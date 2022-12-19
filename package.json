@@ -1,0 +1,23 @@
+{
+  "name": "replicant",
+  "version": "1.0.0",
+  "description": "A library for creating nodejs based REPL environments",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm.cmd run compile",
+    "pretest": "npm.cmd run compile",
+    "posttest": "npm.cmd run lint"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^14.11.2",
+    "gts": "^3.1.1",
+    "typescript": "^4.6.4"
+  }
+}
