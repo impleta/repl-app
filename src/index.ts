@@ -1,8 +1,6 @@
 const vm = require('vm');
-const replicant = require('./replicant'); 
-
+const replicant = require('./replicant');
 const fs = require('fs')
-
 
 const args = process.argv.slice(2);
 
@@ -12,19 +10,11 @@ if (args.length <= 0) {
   repl.start({});
 }
 else {
-/*
-  async function content(path: string) {  
-    return await readFile(path, 'utf8')
-  }
-  */
   const replicantContext = {
-    Replicant: require('./replicant')
+    Replicant: replicant
   };
   
   const text = fs.readFileSync(args[0]);
-  // console.log(text);
-  vm.runInNewContext(text, replicantContext);
-  process.exit(0)
-}
 
-// export {}
+  vm.runInNewContext(text, replicantContext);
+}

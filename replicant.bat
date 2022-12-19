@@ -1,1 +1,2 @@
-node build\src\index.js
+@echo off
+node build\src\index.js %*
