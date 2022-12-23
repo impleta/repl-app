@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A library for creating nodejs based REPL environments",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "gts lint",
@@ -19,5 +20,9 @@
     "@types/node": "^14.11.2",
     "gts": "^3.1.1",
     "typescript": "^4.6.4"
+  },
+  "dependencies": {
+    "@types/find-up": "^4.0.0",
+    "find-up": "^6.3.0"
   }
 }

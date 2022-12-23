@@ -4,43 +4,36 @@ import * as fs from 'fs';
 import {findUp} from 'find-up';
 
 interface ReplicantConfig {
-  libs: {[key:string]:any}
+  libs: {}
 }
 
 export class Replicant {
   
   static async start() {
-    const config = await Replicant.getConfig();
-    const libDefinitions = config.libs;
-    const libImports: Promise<{}>[] = [];
-
-    Object.keys(libDefinitions).forEach(async key => {
-      const libPromise = import(libDefinitions[key]);
-      libImports.push(libPromise);
-    });
-
-    let replicantContext = {};
-
-    Promise.all(libImports).then(allLibs => {
-      replicantContext = Object.assign({}, ...allLibs);
-      Replicant.loadContext(replicantContext);
-    });
-  }
-
-  static loadContext(replicantContext: {[key:string]:any}) {
     const args = process.argv.slice(2);
+    const config = await Replicant.getConfig();
+    const libs = config.libs;
     
     if (args.length <= 0) {
-      Object.keys(replicantContext).forEach(k => {
-        (global as any)[k] = replicantContext[k];  
-      });
+      Replicant.setGlobals(libs);
 
       repl.start({});
     } else {
+      const replicantContext = libs;
+      
       const text = fs.readFileSync(args[0], 'utf-8');    
       vm.runInNewContext(text, replicantContext);
     }
 
+  }
+  
+  static setGlobals(config: {[key:string]:any}) {
+    const libs: {[key:string]:any} = {};
+    Object.keys(config).forEach(async key => {
+      libs[key] = await import(config[key])
+    });
+
+    return libs;
   }
   
   static async getConfig():  Promise<ReplicantConfig> {
@@ -55,8 +48,7 @@ export class Replicant {
   }
 
   static async findFile(filename: string) {
-  // return null;
-  
+ 
     try {
       let filePath = await findUp(filename);
       return filePath;
