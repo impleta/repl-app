@@ -3,8 +3,12 @@ import * as vm from 'vm';
 import * as fs from 'fs';
 import {findUp} from 'find-up';
 
+interface LooseObject {
+  [key:string]:any
+}
+
 interface ReplicantConfig {
-  libs: {[key:string]:any}
+  libs: string[]
 }
 
 export class Replicant {
@@ -14,8 +18,8 @@ export class Replicant {
     const libDefinitions = config.libs;
     const libImports: Promise<{}>[] = [];
 
-    Object.keys(libDefinitions).forEach(async key => {
-      const libPromise = import(libDefinitions[key]);
+    libDefinitions.forEach(async def => {
+      const libPromise = import(def);
       libImports.push(libPromise);
     });
 
@@ -27,9 +31,9 @@ export class Replicant {
     });
   }
 
-  static loadContext(replicantContext: {[key:string]:any}) {
+  static loadContext(replicantContext: LooseObject) {
     const args = process.argv.slice(2);
-    
+
     if (args.length <= 0) {
       Object.keys(replicantContext).forEach(k => {
         (global as any)[k] = replicantContext[k];  
@@ -40,11 +44,11 @@ export class Replicant {
       const text = fs.readFileSync(args[0], 'utf-8');    
       vm.runInNewContext(text, replicantContext);
     }
-
   }
   
   static async getConfig():  Promise<ReplicantConfig> {
-    let  config = {libs: {}};
+    let libs:string[] = [];
+    let  config = {libs: libs};
     const configFile = await this.findFile('replicant.json');
     
     if (configFile) {

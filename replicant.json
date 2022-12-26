@@ -1,6 +1,6 @@
 {
-  "libs": {
-    "MyLib1": "./MyLib1.js",
-    "MyLib2": "./MyLib2.js"
-  }
+  "libs": [
+    "./MyLib1.js",
+    "./MyLib2.js"
+  ]
 }

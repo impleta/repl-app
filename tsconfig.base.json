@@ -13,16 +13,3 @@
     "@types/**/*.ts"
   ],
 }
-
-/*
-{
-  "files": [],
-  "references": [
-    {
-      "path": "./src"
-    },
-    {
-      "path": "./scripts"
-    }
-  ]
-}*/
