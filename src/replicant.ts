@@ -1,6 +1,8 @@
 import * as repl  from 'repl';
 import * as vm from 'vm';
 import * as fs from 'fs';
+import * as Url from 'url';
+import * as Path from 'path';
 import {findUp} from 'find-up';
 
 interface LooseObject {
@@ -14,21 +16,18 @@ interface ReplicantConfig {
 export class Replicant {
   
   static async start() {
-    const config = await Replicant.getConfig();
-    const libDefinitions = config.libs;
-    const libImports: Promise<{}>[] = [];
+    const startPath = Path.dirname(process.argv[1]);
 
-    libDefinitions.forEach(async def => {
-      const libPromise = import(def);
-      libImports.push(libPromise);
-    });
+    const configFile = await this.findFile('replicant.config.js', startPath);
 
     let replicantContext = {};
+    if (configFile) {
+      const configUrl = Url.pathToFileURL(configFile);
 
-    Promise.all(libImports).then(allLibs => {
-      replicantContext = Object.assign({}, ...allLibs);
-      Replicant.loadContext(replicantContext);
-    });
+      replicantContext = await import(configUrl.href);
+    }
+    
+    Replicant.loadContext(replicantContext);
   }
 
   static loadContext(replicantContext: LooseObject) {
@@ -49,7 +48,7 @@ export class Replicant {
   static async getConfig():  Promise<ReplicantConfig> {
     let libs:string[] = [];
     let  config = {libs: libs};
-    const configFile = await this.findFile('replicant.json');
+    const configFile = await this.findFile('replicant.config.js');
     
     if (configFile) {
       config = JSON.parse(fs.readFileSync(configFile, 'utf-8'))
@@ -58,11 +57,9 @@ export class Replicant {
     return config;
   }
 
-  static async findFile(filename: string) {
-  // return null;
-  
+  static async findFile(filename: string, startPath = '.') {
     try {
-      let filePath = await findUp(filename);
+      let filePath = await findUp(filename, {cwd: startPath});
       return filePath;
     } catch(err) {
       console.error(err);
