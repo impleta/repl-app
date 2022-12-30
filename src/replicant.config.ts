@@ -8,6 +8,8 @@
  * 
  * Maybe should just try using --experimental-loader when it's no longer
  * experimental.
+ * 
+ * Actually, check out https://www.npmjs.com/package/add-js-extension/v/1.0.3
  */
 import {MyLib1} from "./MyLib1.js";
 import {MyLib2} from "./MyLib2.js";
