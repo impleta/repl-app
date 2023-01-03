@@ -2,7 +2,7 @@
   "name": "replicant",
   "version": "1.0.0",
   "description": "A library for creating nodejs based REPL environments",
-  "main": "index.js",
+  "main": "./build/src/index.js",
   "files": [
     "build/src"
   ],
