@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as Url from 'url';
 import * as Path from 'path';
 import {findUp} from 'find-up';
+import { createRequire } from 'module';
 
 interface LooseObject {
   [key:string]:any
@@ -16,8 +17,10 @@ interface ReplicantConfig {
 export class Replicant {
   
   static async start() {
-    const startPath = Path.dirname(process.argv[1]);
-
+ 
+    const currentFile = await createRequire(import.meta.url).resolve('.');
+    const startPath = Path.dirname(currentFile);
+    
     const configFile = await this.findFile('replicant.config.js', startPath);
 
     let replicantContext = {};
@@ -25,6 +28,8 @@ export class Replicant {
       const configUrl = Url.pathToFileURL(configFile);
 
       replicantContext = await import(configUrl.href);
+    } else {
+      console.log(`Did not find replicant.config.js in ${startPath} or its ancestor folders.`)
     }
     
     Replicant.loadContext(replicantContext);
