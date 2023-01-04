@@ -13,7 +13,6 @@
     "clean": "gts clean",
     "compile": "tsc",
     "dev": "tsc-watch --onSuccess \"npx replace-in-file --configFile=replace-config.cjs\"",
-    "fix-js-imports": "replace-in-file --configFile=replace-config.cjs",
     "postcompile1": "ncp --filter \"*.d.ts\" build src/@types",
     "fix": "gts fix",
     "prepare": "npm.cmd run compile",
