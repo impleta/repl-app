@@ -5,6 +5,5 @@
 import {MyLib1} from "./MyLib1";
 import {MyLib2} from "./MyLib2";
 
-import {findUp} from "find-up";
 
-export {MyLib1, MyLib2, findUp};
+export {MyLib1, MyLib2};

@@ -1,5 +1,7 @@
 module.exports = {
-  files: './build/src/replicant.config.js',
-  "from": /import (.*) from "(\.\/.*)";/g,
+  files: [
+    './build/**/*.js'
+  ],
+  "from": /import (.*) from ['"](\.(.*?))(?:\.js)?['"];/g,
   "to": "import $1 from '$2.js';"
 };

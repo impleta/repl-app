@@ -1,8 +1,8 @@
 {
-  "name": "replicant",
+  "name": "replapp",
   "version": "1.0.0",
   "description": "A library for creating nodejs based REPL environments",
-  "main": "./build/src/replicant.js",
+  "main": "./build/src/replapp.js",
   "files": [
     "build/src"
   ],
@@ -11,18 +11,17 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "gts lint",
     "clean": "gts clean",
-    "compile": "tsc",
-    "dev": "tsc-watch --onSuccess \"npx replace-in-file --configFile=replace-config.cjs\"",
-    "postcompile1": "ncp --filter \"*.d.ts\" build src/@types",
+    "compile": "tsc && npx replace-in-file --configFile=replace-config.cjs",
+    "dev": "tsc-watch --onSuccess \"npx replace-in-file --configFile=replace-config.cjs --quiet\"",
     "fix": "gts fix",
     "prepare": "npm.cmd run compile",
     "pretest": "npm.cmd run compile",
     "posttest": "npm.cmd run lint"
   },
-  "author": "",
+  "author": "impleta",
   "license": "ISC",
   "bin": {
-    "replicant": "./build/src/index.js"
+    "replapp": "./build/index.js"
   },
   "devDependencies": {
     "@types/node": "^14.11.2",

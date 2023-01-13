@@ -8,8 +8,9 @@
   },
 
   "include": [
-    "src/**/*.ts",
-    "test/**/*.ts",
-    "@types/**/*.ts"
+      "src/**/*.ts"
+    , "test/**/*.ts"
+    , "@types/**/*.ts"
+    , "index.ts"  
   ],
 }
