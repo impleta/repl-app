@@ -1,3 +1,4 @@
+// Intellisense is available for types declared in @types
 let ml1 = new MyLib1();
 ml1.Method1("hello");
 
