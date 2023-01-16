@@ -1,5 +1,5 @@
 {
-  "name": "replapp",
+  "name": "@impleta/repl-app",
   "version": "1.0.0",
   "description": "A library for creating nodejs based REPL environments",
   "main": "./build/src/replapp.js",
@@ -16,7 +16,7 @@
     "postcompile": "npm run addJsSuffix && npm run copyDts && npm run fixDts",
     "addJsSuffix": "npx replace-in-file --configFile=replace-config.cjs --quiet",
     "copyDts": "npx copyfiles -f -e \"build/src/**/ReplApp*.d.ts\"  \"build/src/**/*.d.ts\" @types",
-    "fixDts" : "npx replace-in-file --configFile=replace-config-dts.cjs --quiet",
+    "fixDts": "npx replace-in-file --configFile=replace-config-dts.cjs --quiet",
     "fix": "gts fix",
     "prepare": "npm.cmd run compile",
     "pretest": "npm.cmd run compile",
@@ -25,7 +25,7 @@
   "author": "impleta",
   "license": "ISC",
   "bin": {
-    "replapp": "./build/index.js"
+    "repl-app": "./build/index.js"
   },
   "devDependencies": {
     "@types/node": "^14.11.2",
