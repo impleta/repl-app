@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "strict": false
+  },
+  "include": [
+    "./*.js",
+    "../@types"
+  ]
+}
