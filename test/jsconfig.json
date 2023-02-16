@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "strict": false
+    "target": "es2017",
+    "checkJs": true,
+    "module": "Node16",
+    "experimentalDecorators": true,
   },
   "include": [
     "./*.js",
