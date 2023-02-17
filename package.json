@@ -35,8 +35,5 @@
     "replace-in-file": "^6.3.5",
     "tsc-watch": "^6.0.0",
     "typescript": "^4.6.4"
-  },
-  "dependencies": {
-    "find-up": "^6.3.0"
   }
 }

@@ -8,12 +8,12 @@ export class MyLib2 {
   }
 
   Method1(arg1: string) {
-    console.log(`MyLib2.Method1("${arg1}") called..`);
+    console.log(`MyLib2.Method1("${arg1}") called.`);
   }
 
   async Method2(arg1: string) {
     const ml1 = new MyLib1();
     ml1.Method1(arg1);
-    return await new Promise<string>(r => r('awaited'));
+    return await Promise.resolve('Awaited!');
   }
 }

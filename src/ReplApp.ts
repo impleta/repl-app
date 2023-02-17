@@ -1,12 +1,14 @@
 import * as repl from 'repl';
 import * as fs from 'fs';
 import * as stream from 'stream';
+import { EOL } from 'os';
 
 interface LooseObject {
   [key: string]: unknown;
 }
 
 export class ReplApp {
+
   static async start(initFilePath = './ReplApp.init.js') {
     const initFileContents: LooseObject = await ReplApp.getInitFileContents(
       initFilePath
@@ -28,7 +30,7 @@ export class ReplApp {
     return initFileContents;
   }
 
-  static getContext() {
+  static getContext(): repl.ReplOptions {
     const args = process.argv.slice(2);
 
     const replicantContext = {ignoreUndefined: true};
@@ -40,19 +42,44 @@ export class ReplApp {
 
     return replicantContext;
   }
-  static getBatchContext(fileName: string): any {
+
+  static getBatchContext(fileName: string): repl.ReplOptions {
     const inputStream = fs.createReadStream(fileName);
 
-    const outputStream = new stream.PassThrough();
-    outputStream.setEncoding('utf-8');
-    outputStream.on('data', chunk => {
-      console.log(chunk);
-    });
+    // TODO: Provide an override for this so we can optionally see the source
+    ReplApp.setupStdout();
 
     return {
       input: inputStream,
-      output: outputStream,
-      prompt: '',
+      output: process.stdout,
+      prompt: 'input>',
+    };
+  }
+
+  /**
+   * Overwrites process.stdout.write so that source code is not autmatically printed to screen.
+   */
+  static setupStdout() {
+    const originalStdoutWrite = process.stdout.write.bind(process.stdout);
+
+    let isSourceLine = false;
+
+    process.stdout.write = (
+      chunk: Uint8Array | string,
+      encoding?: undefined,
+      callback?: (err?: Error) => void
+    ) => {
+      if (chunk === 'input>') {
+        chunk = '';
+        isSourceLine = true;
+      } else if (chunk === EOL) {
+        chunk = '';
+        isSourceLine = false;
+      } else if (isSourceLine) {
+        chunk = '';
+      }
+
+      return originalStdoutWrite(chunk, encoding, callback);
     };
   }
 }

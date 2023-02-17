@@ -5,5 +5,13 @@ ml1.Method1('hello');
 let ml2 = new MyLib2();
 ml2.Method1('Hello Hello');
 
-let ret = await ml2.Method2('Hola');
-console.log(ret);
+let ret = ml2.Method2('Hola'); console.log(await ret);
+
+const myAsync = async () => await Promise.resolve("Something");
+
+let otherRet = await myAsync();
+console.log(otherRet);
+
+let someOtherRet = await Promise.resolve("Works!");
+console.log(someOtherRet);
+
