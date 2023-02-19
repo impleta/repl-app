@@ -14,4 +14,3 @@ console.log(otherRet);
 
 let someOtherRet = await Promise.resolve("Works!");
 console.log(someOtherRet);
-
