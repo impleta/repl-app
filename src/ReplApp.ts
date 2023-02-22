@@ -6,19 +6,44 @@ interface LooseObject {
 }
 
 export class ReplApp {
-
   static async start(initFilePath = './ReplApp.init.js') {
     const initFileContents: LooseObject = await ReplApp.getInitFileContents(
       initFilePath
     );
+
+    const args = process.argv.slice(2);
+
     const replContext = ReplApp.getContext();
 
-    const replServer = repl.start(replContext);
-    replServer.context.ClearRepl = () => replServer.emit('reset');
+    if (args.length === 0) {
+      ReplApp.startRepl(replContext, initFileContents);
+    } else {
+      ReplApp.startBatchRepl(replContext, initFileContents, args);
+    }
+  }
 
+  static startBatchRepl(
+    replContext: repl.ReplOptions,
+    initFileContents: LooseObject,
+    args: string[]
+  ) {
+    const files = ScriptMode.getFiles(args);
+    files.forEach(f => {
+      Object.assign(replContext, ScriptMode.getContext(f));
+      ReplApp.startRepl(replContext, initFileContents);
+    });
+  }
+
+  static startRepl(
+    replContext: repl.ReplOptions,
+    initFileContents: LooseObject
+  ) {
+    const replServer = repl.start(replContext);
     Object.keys(initFileContents).forEach(k => {
       replServer.context[k] = initFileContents[k];
     });
+
+    return replServer;
   }
 
   static async getInitFileContents(initFileName: string) {
@@ -30,15 +55,7 @@ export class ReplApp {
   }
 
   static getContext(): repl.ReplOptions {
-    const args = process.argv.slice(2);
-
     const replContext = {ignoreUndefined: true};
-
-    // If there are args, then we're in batch mode
-    if (args.length > 0) {
-      Object.assign(replContext, ScriptMode.getBatchContext(args));
-    }
-
     return replContext;
   }
 }

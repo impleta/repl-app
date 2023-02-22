@@ -28,6 +28,7 @@
     "repl-app": "./build/index.js"
   },
   "devDependencies": {
+    "@types/glob": "^8.0.1",
     "@types/multistream": "^4.1.0",
     "@types/node": "^14.11.2",
     "copyfiles": "^2.4.1",
@@ -38,6 +39,6 @@
     "typescript": "^4.6.4"
   },
   "dependencies": {
-    "multistream": "^4.1.0"
+    "glob": "^8.1.0"
   }
 }
