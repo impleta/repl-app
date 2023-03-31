@@ -2,6 +2,7 @@ import * as repl from 'repl';
 import * as fs from 'fs';
 import Path from 'path';
 import glob from 'glob';
+
 import {EOL} from 'os';
 import {Transform} from 'stream';
 
@@ -11,6 +12,7 @@ export type ScriptModeReplOptions = {
 
 export class ScriptMode {
   static prompt = 'input>';
+  static continuePrompt = '... ';
 
   static stdoutHasBeenSetup = false;
 
@@ -102,15 +104,14 @@ export class ScriptMode {
 
     let isSourceLine = false;
 
-    // Source code is determined to be any line follwing the prompt.
-    // If the chunk paramter below matches the prompt, then nothing is
-    // written to the stdout until an EOL is detected.
     process.stdout.write = (
-      chunk: Uint8Array | string,
+      chunk: string,
       encoding?: undefined,
       callback?: (err?: Error) => void
     ) => {
-      if (chunk === ScriptMode.prompt) {
+      if ([ScriptMode.prompt, ScriptMode.continuePrompt].includes(chunk)) {
+        // Source code is determined to be any line follwing the prompt or continuePrompt.
+        // Do not write to stdout until an EOL is detected.
         chunk = '';
         isSourceLine = true;
       } else if (chunk === EOL) {
@@ -118,7 +119,19 @@ export class ScriptMode {
         isSourceLine = false;
       } else if (isSourceLine) {
         chunk = '';
+      } else if (chunk.includes('\u001b[32m')) {
+        /**
+         * Not pretty, but this prevents lines like 'a = 5' causing console output.
+         * let a = 5 // causes no output
+         * a = 5 // causes 5 to be printed to screen.
+         * This check prevents that by looking at color codes on the console.
+         * This is very brittle code, and we should figure out a better to prevent spurious output.
+         * */
+        chunk = '';
       }
+
+      // Uncomment the following for debugging purposes.
+      // fs.appendFileSync('./outlog.txt', chunk + '::');
 
       return originalStdoutWrite(chunk, encoding, callback);
     };
