@@ -18,7 +18,7 @@ export class ScriptMode {
 
   /**
    * Returns the options for running the REPL in script mode.
-   * @param filePath A string representing a paths for a script file
+   * @param filePath A string representing a path for a script file
    * @returns Options for running the REPL in script mode
    */
   static getContext(filePath: string) {
@@ -58,6 +58,7 @@ export class ScriptMode {
 
     return inputStream.pipe(appendNewline);
   }
+
 
   /**
    * Returns a flat array of all descendant files of the specified paths.
@@ -119,13 +120,16 @@ export class ScriptMode {
         isSourceLine = false;
       } else if (isSourceLine) {
         chunk = '';
-      } else if (chunk.includes('\u001b[32m')) {
+      // } else if (chunk.includes('\u001b[32m')) {
+      } else if ((chunk.match(/^\x1b\[32m/g) || []).length === 1) {
         /**
          * Not pretty, but this prevents lines like 'a = 5' causing console output.
          * let a = 5 // causes no output
          * a = 5 // causes 5 to be printed to screen.
-         * This check prevents that by looking at color codes on the console.
-         * This is very brittle code, and we should figure out a better to prevent spurious output.
+         * This check prevents that by looking at strings starting with a specific
+         * color code on the console.
+         * This is very brittle, and we should figure out a better way to prevent 
+         * spurious output.
          * */
         chunk = '';
       }

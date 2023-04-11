@@ -13,4 +13,5 @@ const myAsync = async () => await Promise.resolve("Something");
 let otherRet = await myAsync();
 console.log(otherRet);
 
-let someOtherRet = await Promise.resolve("Works!"); console.log(someOtherRet);
+someOtherRet = await Promise.resolve("Works!"); 
+console.log(someOtherRet);
