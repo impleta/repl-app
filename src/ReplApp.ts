@@ -6,7 +6,28 @@ interface LooseObject {
 }
 
 export class ReplApp {
-  static async start(initFilePath = './ReplApp.init.js') {
+  static async start(initFilePaths = ['./ReplApp.init.js']) {
+
+    let initFileContents: LooseObject = {};
+
+    const contents = await Promise.all(
+      initFilePaths.map(async p => await ReplApp.getInitFileContents(p))
+    );
+
+    initFileContents = Object.assign({}, ...contents);
+
+    const args = process.argv.slice(2);
+
+    const replContext = ReplApp.getContext();
+
+    if (args.length === 0) {
+      ReplApp.startRepl(replContext, initFileContents);
+    } else {
+      ReplApp.startBatchRepl(replContext, initFileContents, args);
+    }
+  }
+
+  static async start2(initFilePath = './ReplApp.init.js') {
     const initFileContents: LooseObject = await ReplApp.getInitFileContents(
       initFilePath
     );
@@ -46,7 +67,7 @@ export class ReplApp {
     return replServer;
   }
 
-  static async getInitFileContents(initFileName: string) {
+  static async getInitFileContents(initFileName: string): Promise<LooseObject> {
     let initFileContents = {};
 
     initFileContents = await import(initFileName);
