@@ -2,6 +2,7 @@ import * as repl from 'repl';
 import * as fs from 'fs';
 import Path from 'path';
 import glob from 'glob';
+import {fileURLToPath} from 'url';
 
 import {EOL} from 'os';
 import {Transform} from 'stream';
@@ -67,15 +68,20 @@ export class ScriptMode {
    * @returns a flat array of all files found
    */
   static getFiles(paths: string[]) {
+    const __dirname = process.cwd();
+
     const files = paths.map(a => {
-      if (fs.existsSync(a)) {
-        const stats = fs.lstatSync(a);
+      const absoluteFilePath = Path.join(__dirname, a);
+      if (fs.existsSync(absoluteFilePath)) {
+        const stats = fs.lstatSync(absoluteFilePath);
         if (stats.isFile()) {
-          return a;
+          return absoluteFilePath;
         }
 
         if (stats.isDirectory()) {
-          let globPattern = Path.resolve(Path.join(a, '/**/*.js'));
+          let globPattern = Path.resolve(
+            Path.join(absoluteFilePath, '/**/*.js')
+          );
 
           if (Path.sep !== '/') {
             globPattern = globPattern.replace(/\\/g, '/');
@@ -86,6 +92,7 @@ export class ScriptMode {
       }
 
       // TODO: How do we inform the user when the file does not exist?
+      console.log(`did not find file or folder ${absoluteFilePath}`);
       return null;
     }) as string[];
 

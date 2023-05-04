@@ -1,29 +1,52 @@
 import * as repl from 'repl';
+import Path from 'path';
 import {ScriptMode} from './ScriptMode';
+import {pathToFileURL, fileURLToPath} from 'url';
 
 interface LooseObject {
   [key: string]: unknown;
 }
 
+export type ReplAppParams = {
+  initFilePaths: string[];
+  scriptPaths: string[];
+};
+
 export class ReplApp {
-  static async start(initFilePaths = ['./ReplApp.init.js']) {
+  static async start(params: ReplAppParams) {
+
+    let initFilePaths = params.initFilePaths;
+
+    if (!initFilePaths || initFilePaths.length === 0) {
+      const currentPath = Path.dirname(fileURLToPath(import.meta.url));
+      initFilePaths = [Path.join(currentPath, './ReplApp.init.js')];
+    }
 
     let initFileContents: LooseObject = {};
 
+    const getAbsolutePath = (p: string) => {
+      if (Path.isAbsolute(p)) {
+        return pathToFileURL(p).href;
+      }
+
+      const __dirname = pathToFileURL(process.cwd()).href;
+      return Path.join(__dirname, p);
+    };
+
     const contents = await Promise.all(
-      initFilePaths.map(async p => await ReplApp.getInitFileContents(p))
+      initFilePaths.map(
+        async p => await ReplApp.getInitFileContents(getAbsolutePath(p))
+      )
     );
 
     initFileContents = Object.assign({}, ...contents);
 
-    const args = process.argv.slice(2);
-
     const replContext = ReplApp.getContext();
 
-    if (args.length === 0) {
+    if (params.scriptPaths.length === 0) {
       ReplApp.startRepl(replContext, initFileContents);
     } else {
-      ReplApp.startBatchRepl(replContext, initFileContents, args);
+      ReplApp.startBatchRepl(replContext, initFileContents, params.scriptPaths);
     }
   }
 
