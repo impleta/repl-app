@@ -3,7 +3,7 @@ import {parseArgs, ParseArgsConfig} from 'util';
 export class CommandLineArgsParser {
   static argsConfig: ParseArgsConfig = {
     options: {
-      ra_module: {
+      ra_initfile: {
         type: 'string',
         multiple: true,
       },
@@ -13,12 +13,6 @@ export class CommandLineArgsParser {
   };
 
   static getArgs() {
-    try {
-      return parseArgs(CommandLineArgsParser.argsConfig);
-    } catch (err) {
-      console.log(err);
-    }
-
-    return undefined;
+    return parseArgs(CommandLineArgsParser.argsConfig);
   }
 }

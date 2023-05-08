@@ -2,7 +2,6 @@ import * as repl from 'repl';
 import * as fs from 'fs';
 import Path from 'path';
 import glob from 'glob';
-import {fileURLToPath} from 'url';
 
 import {EOL} from 'os';
 import {Transform} from 'stream';
