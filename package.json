@@ -15,7 +15,7 @@
     "dev": "tsc-watch --onSuccess \"npm run postcompile\"",
     "postcompile": "npm run addJsSuffix && npm run copyDts && npm run fixDts && echo 'Ready...'",
     "addJsSuffix": "npx replace-in-file --configFile=replace-config.cjs --quiet",
-    "copyDts": "npx copyfiles -f -e \"build/src/**/ReplApp*.d.ts\"  \"build/src/**/*.d.ts\" @types",
+    "copyDts": "npx copyfiles -f \"build/src/**/*.d.ts\" @types",
     "fixDts": "npx replace-in-file --configFile=replace-config-dts.cjs --quiet",
     "fix": "gts fix",
     "prepare": "npm.cmd run compile",

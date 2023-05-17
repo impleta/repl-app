@@ -15,3 +15,5 @@ console.log(otherRet);
 
 someOtherRet = await Promise.resolve("Works!"); 
 console.log(someOtherRet);
+
+console.log(CommandLineArgs);

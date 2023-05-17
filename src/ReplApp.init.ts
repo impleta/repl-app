@@ -4,5 +4,5 @@
  */
 import {MyLib1} from './MyLib1';
 import {MyLib2} from './MyLib2';
-
-export {MyLib1, MyLib2};
+import {ReplApp} from './ReplApp';
+export {MyLib1, MyLib2, ReplApp};
