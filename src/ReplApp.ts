@@ -1,4 +1,5 @@
 import * as repl from 'repl';
+import * as fs from 'fs';
 import Path from 'path';
 import {ScriptMode} from './ScriptMode';
 import {pathToFileURL} from 'url';
@@ -24,21 +25,8 @@ export class ReplApp {
 
     let initFileContents: LooseObject = {};
 
-    // returns a path to its file URL equivalent, after first
-    // converting to absolute if needed
-    const getAbsolutePathFileURL = (p: string) => {
-      if (Path.isAbsolute(p)) {
-        return pathToFileURL(p).href;
-      }
-
-      const __dirname = pathToFileURL(process.cwd()).href;
-      return Path.join(__dirname, p);
-    };
-
     const contents = await Promise.all(
-      initFilePaths.map(
-        async p => await ReplApp.getInitFileContents(getAbsolutePathFileURL(p))
-      )
+      initFilePaths.map(async p => await ReplApp.getInitFileContents(p))
     );
 
     initFileContents = Object.assign(
@@ -92,12 +80,25 @@ export class ReplApp {
   }
 
   static async getInitFileContents(initFileName: string): Promise<LooseObject> {
+    // converts a path to its file URL equivalent, after first
+    // converting to absolute if needed
+    const getAbsolutePathFileURL = (p: string) => {
+      if (Path.isAbsolute(p)) {
+        return pathToFileURL(p).href;
+      }
+
+      const __dirname = pathToFileURL(process.cwd()).href;
+      return Path.join(__dirname, p);
+    };
+
+    initFileName = getAbsolutePathFileURL(initFileName);
+
     let initFileContents = {};
 
     try {
       initFileContents = await import(initFileName);
     } catch (err) {
-      console.log(`Error importing init file: ${initFileName}`);
+      console.log(`Error importing init file: ${initFileName}: ${err}`);
     }
 
     return initFileContents;
@@ -107,6 +108,23 @@ export class ReplApp {
     const replContext = {ignoreUndefined: true};
     return replContext;
   }
+
+  static getJSONFileContentsAsObject(jsonFileName: string) {
+    // TODO: For now, cannot use dynamic imports with JSON files without the experimental switch,
+    // TODO: so simply read the file and deserialize. Can later merge with the getInitFileContents
+    // TODO: code above once the switch is no longer needed
+    const getAbsolutePath = (p: string) => {
+      if (Path.isAbsolute(p)) {
+        return p;
+      }
+
+      const __dirname = process.cwd();
+      return Path.join(__dirname, p);
+    };
+
+    const path = getAbsolutePath (jsonFileName);
+    return JSON.parse(fs.readFileSync(path, 'utf-8'));
+  }
 }
 
-export {ReplAppArgs};
+export {ReplAppArgs, CommandLineArgsParser};

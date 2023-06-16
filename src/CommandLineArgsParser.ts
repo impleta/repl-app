@@ -15,6 +15,7 @@ export type ReplAppArgs = {
   initFilePaths: string[];
   scriptPaths: string[];
   scriptArgs: {[key: string]: unknown};
+  parsedArgs: ParsedArgs;
 };
 /**
  * This is to assist with auto completion (by making this available in the .d.ts file generated with @types)
@@ -51,6 +52,7 @@ export class CommandLineArgsParser {
       initFilePaths: parsedArgs.values['initFile'] as string[],
       scriptPaths: parsedArgs.positionals,
       scriptArgs: parsedArgs.scriptArgs,
+      parsedArgs: parsedArgs,
     };
 
     return CommandLineArgsParser.parsedArgs;
