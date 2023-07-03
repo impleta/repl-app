@@ -1,6 +1,6 @@
 {
   "name": "@impleta/repl-app",
-  "version": "1.2.2",
+  "version": "1.2.4",
   "description": "A library for creating nodejs based REPL environments",
   "main": "./build/src/replapp.js",
   "files": [

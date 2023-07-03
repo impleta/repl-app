@@ -15,7 +15,8 @@ export class ReplApp {
 
   static async start(
     initFilePaths: string[] = [],
-    argsConfig?: ParseArgsConfig
+    argsConfig?: ParseArgsConfig,
+    optionsDescription?: {[option: string]: string}
   ): Promise<repl.REPLServer[]> {
     const replAppArgs = CommandLineArgsParser.getArgs(argsConfig);
 
@@ -23,6 +24,12 @@ export class ReplApp {
       initFilePaths.push(...replAppArgs.initFilePaths);
     }
 
+    let repls: repl.REPLServer[] = [];
+
+    if (replAppArgs.parsedArgs.values['help'] as string) {
+      ReplApp.showHelpText(optionsDescription);
+      return repls;
+    }
     let initFileContents: LooseObject = {};
 
     const contents = await Promise.all(
@@ -36,7 +43,6 @@ export class ReplApp {
 
     const replContext = ReplApp.getContext();
 
-    let repls: repl.REPLServer[];
 
     if (replAppArgs.scriptPaths.length === 0) {
       repls = ReplApp.startRepl(replContext, initFileContents);
@@ -49,6 +55,16 @@ export class ReplApp {
     }
 
     return repls;
+  }
+
+  static showHelpText(
+    optionDescriptions: {[option: string]: string} | undefined
+  ) {
+    if (optionDescriptions) {
+      Object.entries(optionDescriptions).forEach(([option, description]) => {
+        console.log(`  --${option}\t${description}`);
+      });
+    }
   }
 
   static startBatchRepl(
@@ -113,17 +129,17 @@ export class ReplApp {
     // TODO: For now, cannot use dynamic imports with JSON files without the experimental switch,
     // TODO: so simply read the file and deserialize. Can later merge with the getInitFileContents
     // TODO: code above once the switch is no longer needed
-    const getAbsolutePath = (p: string) => {
-      if (Path.isAbsolute(p)) {
-        return p;
-      }
-
-      const __dirname = process.cwd();
-      return Path.join(__dirname, p);
-    };
-
-    const path = getAbsolutePath (jsonFileName);
+    const path = ReplApp.getAbsolutePath(jsonFileName);
     return JSON.parse(fs.readFileSync(path, 'utf-8'));
+  }
+
+  static getAbsolutePath(p: string) {
+    if (Path.isAbsolute(p)) {
+      return p;
+    }
+
+    const __dirname = process.cwd();
+    return Path.join(__dirname, p);
   }
 }
 
