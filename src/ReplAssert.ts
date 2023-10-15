@@ -3,6 +3,15 @@ import {assert} from 'chai';
 type AssertStatic = typeof assert;
 
 class ReplAssert {
+  static successMessageHandler = (msg: string) => {
+    console.log(msg);
+  };
+
+  static failureMessageHandler = (msg: string, e: Error) => {
+    console.log(msg, e);
+    return e;
+  };
+
   static createAssertProxy(obj: AssertStatic) {
     return new Proxy(obj, {
       get(target: AssertStatic, prop: keyof AssertStatic) {
@@ -11,14 +20,15 @@ class ReplAssert {
             apply: (target, thisArg, argumentsList) => {
               try {
                 const ret = Reflect.apply(target, thisArg, argumentsList);
+                ReplAssert.successMessageHandler(
+                  `Success!: assert.${prop}(${argumentsList.join()})`
+                );
                 return ret;
               } catch (e) {
-                console.log(`Failed!: assert.${prop}(${argumentsList.join()})`);
-
-                if (e instanceof Error) {
-                  console.log(e.stack);
-                }
-                return '';
+                ReplAssert.failureMessageHandler(
+                  `Failed!: assert.${prop}(${argumentsList.join()})`,
+                  e as Error
+                );
               }
             },
           });
@@ -31,4 +41,4 @@ class ReplAssert {
 }
 
 const replAssert = ReplAssert.createAssertProxy(assert);
-export {replAssert as assert};
+export {replAssert as assert, ReplAssert};

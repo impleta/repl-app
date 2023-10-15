@@ -6,7 +6,7 @@ import Path from 'path';
 import {pathToFileURL} from 'url';
 import {CommandLineArgsParser, ReplAppArgs} from './CommandLineArgsParser';
 import {ParseArgsConfig} from 'util';
-import {assert} from './ReplAssert';
+import {ReplAssert, assert} from './ReplAssert';
 
 interface LooseObject {
   [key: string]: unknown;
@@ -71,13 +71,6 @@ export class ReplApp {
     }
   }
 
-  static async linker(specifier: string, referencingModule: vm.Module) {
-    if (specifier === 'foo') {
-      return new vm.SourceTextModule('', {context: referencingModule.context});
-    }
-
-    throw new Error(`Unable to resolve dependency: ${specifier}`);
-  }
   static startBatchRepl(
     replContext: repl.ReplOptions,
     initFileContents: LooseObject,
@@ -96,16 +89,19 @@ export class ReplApp {
       }
 
       throw new Error(`Unable to resolve dependency: ${specifier}`);
-    }
+    };
+
     files.forEach(async (f: string) => {
       const fileContents = fs.readFileSync(f, 'utf-8');
 
-      // Important: do not modify fileContents before passing to 
+      // Important: do not modify fileContents before passing to
       // SourceTextModule, as that will affect identifying the correct lines
       // in test run reports.
       const bar = new vm.SourceTextModule(fileContents, {
         context: contextifiedObject,
+        identifier: 'repl-app-script',
       });
+
       await bar.link(linker);
       await bar.evaluate();
     });
@@ -212,4 +208,4 @@ export class ReplApp {
   }
 }
 
-export {ReplAppArgs, CommandLineArgsParser, assert};
+export {ReplAppArgs, CommandLineArgsParser, assert, ReplAssert};

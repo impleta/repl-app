@@ -14,4 +14,5 @@
       "src/**/*.ts"
     , "index.ts"
   ],
+  "exclude": ["build", "node_modules", "**/*.spec.ts", "tests/**/*.js", "@types"]
 }
