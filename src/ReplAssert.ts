@@ -1,14 +1,15 @@
 import {assert} from 'chai';
+import chalk from 'chalk';
 
 type AssertStatic = typeof assert;
 
 class ReplAssert {
   static successMessageHandler = (msg: string) => {
-    console.log(msg);
+    console.log(chalk.yellow(msg));
   };
 
   static failureMessageHandler = (msg: string, e: Error) => {
-    console.log(msg);
+    console.log(chalk.red(msg));
     return e;
   };
 
@@ -17,12 +18,13 @@ class ReplAssert {
    *
    * This is used for
    *  1. Modifying the success and failure messages
-   *  2. Determing which asserts (by line #) failed when running in batch mode so
+   *  2. Determining which asserts (by line #) failed when running in batch mode so
    *     reports can be created appropriately.
    *
    * TODO:
    *  Currently, we cannot determine line # when an assertion succeeds. One way to achieve
-   *  that is to use create hashes of 
+   *  that is to use create hashes of assert statements and keep track of which assert
+   *  is on which line.
    */
   static createAssertProxy(obj: AssertStatic) {
     return new Proxy(obj, {
