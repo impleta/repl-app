@@ -1,15 +1,18 @@
 import {assert} from 'chai';
 import chalk from 'chalk';
+// import {TestRunner} from './TestRunner';
 
 type AssertStatic = typeof assert;
 
 class ReplAssert {
-  static successMessageHandler = (msg: string) => {
-    console.log(chalk.yellow(msg));
+  static successMessageHandler = (assertion: string) => {
+    // TestRunner.AssertionSuccessHandler(assertion);
+    console.log(chalk.yellow(`Success!: ${assertion}`));
   };
 
-  static failureMessageHandler = (msg: string, e: Error) => {
-    console.log(chalk.red(msg));
+  static failureMessageHandler = (assertion: string, e: Error) => {
+    // TestRunner.AssertionFailedHandler(assertion);
+    console.log(chalk.red(`Failed!: ${assertion}`));
     return e;
   };
 
@@ -33,15 +36,14 @@ class ReplAssert {
           return new Proxy(target[prop], {
             apply: (target, thisArg, argumentsList) => {
               const args = ReplAssert.getArguments(argumentsList);
+              const reconstructedAssertion = `assert.${prop}(${args})`;
               try {
                 const ret = Reflect.apply(target, thisArg, argumentsList);
-                ReplAssert.successMessageHandler(
-                  `Success!: assert.${prop}(${args})`
-                );
+                ReplAssert.successMessageHandler(reconstructedAssertion);
                 return ret;
               } catch (e) {
                 ReplAssert.failureMessageHandler(
-                  `Failed!: assert.${prop}(${args})`,
+                  reconstructedAssertion,
                   e as Error
                 );
               }

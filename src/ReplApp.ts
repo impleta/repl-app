@@ -1,12 +1,14 @@
 import * as repl from 'repl';
 import * as fs from 'fs';
 import * as vm from 'vm';
+import chalk from 'chalk';
 import glob from 'glob';
 import Path from 'path';
 import {pathToFileURL} from 'url';
 import {CommandLineArgsParser, ReplAppArgs} from './CommandLineArgsParser';
 import {ParseArgsConfig} from 'util';
 import {ReplAssert, assert} from './ReplAssert';
+import {TestRunner} from './TestRunner';
 
 interface LooseObject {
   [key: string]: unknown;
@@ -21,19 +23,17 @@ export class ReplApp {
     initFilePaths: string[] = [],
     argsConfig?: ParseArgsConfig,
     optionsDescription?: {[option: string]: string}
-  ): Promise<repl.REPLServer[]> {
+  ) {
     const replAppArgs = CommandLineArgsParser.getArgs(argsConfig);
 
     if (replAppArgs.initFilePaths) {
       initFilePaths.push(...replAppArgs.initFilePaths);
     }
 
-    let repls: repl.REPLServer[] = [];
-
     // TODO: This belongs in the actual repls, not in repl-app
     if (replAppArgs.parsedArgs.values['help'] as string) {
       ReplApp.showHelpText(optionsDescription);
-      return repls;
+      return;
     }
     let initFileContents: LooseObject = {};
 
@@ -49,16 +49,14 @@ export class ReplApp {
     const replContext = ReplApp.getContext();
 
     if (replAppArgs.scriptPaths.length === 0) {
-      repls = ReplApp.startRepl(replContext, initFileContents);
+      ReplApp.startRepl(replContext, initFileContents);
     } else {
-      repls = ReplApp.startBatchRepl(
+      ReplApp.startBatchRepl(
         replContext,
         initFileContents,
         replAppArgs.scriptPaths
       );
     }
-
-    return repls;
   }
 
   static showHelpText(
@@ -71,42 +69,22 @@ export class ReplApp {
     }
   }
 
-  static startBatchRepl(
+  static async startBatchRepl(
     replContext: repl.ReplOptions,
     initFileContents: LooseObject,
     args: string[]
   ) {
+
     const files = ReplApp.getFiles(args);
-    const repls: repl.REPLServer[] = [];
+    const runner = new TestRunner(files, initFileContents);
+    const result = await runner.run();
+    if (result) {
+      console.log(chalk.yellow('All tests succeeded!'));
+    } else {
+      console.log(chalk.red('One or more tests failed'));
+    }
 
-    const contextifiedObject = vm.createContext({console, ...initFileContents});
-
-    const linker = async (specifier: string, referencingModule: vm.Module) => {
-      if (specifier === 'foo') {
-        return new vm.SourceTextModule('', {
-          context: referencingModule.context,
-        });
-      }
-
-      throw new Error(`Unable to resolve dependency: ${specifier}`);
-    };
-
-    files.forEach(async (f: string) => {
-      const fileContents = fs.readFileSync(f, 'utf-8');
-
-      // Important: do not modify fileContents before passing to
-      // SourceTextModule, as that will affect identifying the correct lines
-      // in test run reports.
-      const bar = new vm.SourceTextModule(fileContents, {
-        context: contextifiedObject,
-        identifier: 'repl-app-script',
-      });
-
-      await bar.link(linker);
-      await bar.evaluate();
-    });
-
-    return repls;
+    // runner.results();
   }
 
   static startRepl(
