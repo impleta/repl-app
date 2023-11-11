@@ -1,5 +1,6 @@
 import * as vm from 'vm';
 import * as fs from 'fs';
+import {ReplAssert} from './ReplAssert';
 
 export class Test {
   filePath: string;
@@ -11,6 +12,8 @@ export class Test {
     // Important: do not modify fileContents before passing to
     // SourceTextModule, as that will affect identifying the correct lines
     // in test run reports.
+    context.assert = ReplAssert.getInstance(this);
+
     const bar = new vm.SourceTextModule(fileContents, {
       context: context,
       identifier: 'repl-app-script',

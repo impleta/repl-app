@@ -1,18 +1,22 @@
 import {assert} from 'chai';
 import chalk from 'chalk';
+import {Test} from './Test';
 // import {TestRunner} from './TestRunner';
 
 type AssertStatic = typeof assert;
 
 class ReplAssert {
   static successMessageHandler = (assertion: string) => {
-    // TestRunner.AssertionSuccessHandler(assertion);
     console.log(chalk.yellow(`Success!: ${assertion}`));
   };
 
-  static failureMessageHandler = (assertion: string, e: Error) => {
-    // TestRunner.AssertionFailedHandler(assertion);
+  static failureMessageHandler = (assertion: string, e: Error, test?: Test) => {
     console.log(chalk.red(`Failed!: ${assertion}`));
+    if (test) {
+      // TODO:
+      // test.assertionFailed(assertion, e);
+    }
+    // console.log(chalk.red(`Failed!: ${assertion}\r\n${JSON.stringify(e)}`));
     return e;
   };
 
@@ -29,7 +33,7 @@ class ReplAssert {
    *  that is to use create hashes of assert statements and keep track of which assert
    *  is on which line.
    */
-  static createAssertProxy(obj: AssertStatic) {
+  static createAssertProxy(obj: AssertStatic, testInstance?: Test) {
     return new Proxy(obj, {
       get(target: AssertStatic, prop: keyof AssertStatic) {
         if (typeof target[prop] === 'function') {
@@ -44,7 +48,8 @@ class ReplAssert {
               } catch (e) {
                 ReplAssert.failureMessageHandler(
                   reconstructedAssertion,
-                  e as Error
+                  e as Error,
+                  testInstance
                 );
               }
             },
@@ -67,7 +72,10 @@ class ReplAssert {
       .join(', ');
   }
 
+  static getInstance(testInstance?: Test) {
+    return ReplAssert.createAssertProxy(assert, testInstance);
+  }
 }
 
-const replAssert = ReplAssert.createAssertProxy(assert);
+const replAssert = ReplAssert.getInstance();
 export {replAssert as assert, ReplAssert};
