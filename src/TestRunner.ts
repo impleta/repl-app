@@ -1,6 +1,7 @@
 import * as vm from 'vm';
 import * as fs from 'fs';
 import {Test} from './Test';
+import { TestRunReport } from './TestRunReport';
 
 /**
  * Manages a Test Run (each invocation of the repl with one or
@@ -41,7 +42,11 @@ export class TestRunner {
       const test = new Test(f);
       return await test.run(this.context, this.linker);
     });
+
     const results = await Promise.all(promises);
-    return results.every(e => e);
+    const testRunReport = new TestRunReport();
+    testRunReport.testReports = results;
+
+    return testRunReport.getResult();
   }
 }

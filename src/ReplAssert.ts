@@ -1,7 +1,6 @@
 import {assert} from 'chai';
 import chalk from 'chalk';
-import {Test} from './Test';
-// import {TestRunner} from './TestRunner';
+import {TestReport} from './TestReport';
 
 type AssertStatic = typeof assert;
 
@@ -10,15 +9,32 @@ class ReplAssert {
     console.log(chalk.yellow(`Success!: ${assertion}`));
   };
 
-  static failureMessageHandler = (assertion: string, e: Error, test?: Test) => {
-    console.log(chalk.red(`Failed!: ${assertion}`));
-    if (test) {
-      // TODO:
-      // test.assertionFailed(assertion, e);
+  static failureMessageHandler(
+    assertion: string,
+    e: Error,
+    report?: TestReport
+  ) {
+    const lineNumber = ReplAssert.getLineNumber(e);
+    const msg = `Failed!: ${assertion}: line ${lineNumber}`;
+    console.log(chalk.red(msg));
+
+    if (report) {
+      report.addAssertionResult({
+        msg: msg,
+        assertionText: assertion,
+        success: false,
+        lineNumber: lineNumber,
+        error: e,
+      });
     }
-    // console.log(chalk.red(`Failed!: ${assertion}\r\n${JSON.stringify(e)}`));
+
     return e;
-  };
+  }
+
+  static getLineNumber(e: Error): number {
+    const matches = e.stack?.match(/at repl-app-script:(\d+):/);
+    return Number(matches?.[1]);
+  }
 
   /**
    * A proxy to intercept calls to function defined in chai.assert.
@@ -33,7 +49,7 @@ class ReplAssert {
    *  that is to use create hashes of assert statements and keep track of which assert
    *  is on which line.
    */
-  static createAssertProxy(obj: AssertStatic, testInstance?: Test) {
+  static createAssertProxy(obj: AssertStatic, report?: TestReport) {
     return new Proxy(obj, {
       get(target: AssertStatic, prop: keyof AssertStatic) {
         if (typeof target[prop] === 'function') {
@@ -49,7 +65,7 @@ class ReplAssert {
                 ReplAssert.failureMessageHandler(
                   reconstructedAssertion,
                   e as Error,
-                  testInstance
+                  report
                 );
               }
             },
@@ -72,8 +88,8 @@ class ReplAssert {
       .join(', ');
   }
 
-  static getInstance(testInstance?: Test) {
-    return ReplAssert.createAssertProxy(assert, testInstance);
+  static getInstance(report?: TestReport) {
+    return ReplAssert.createAssertProxy(assert, report);
   }
 }
 

@@ -25,6 +25,7 @@ export class ReplApp {
     optionsDescription?: {[option: string]: string}
   ) {
     const replAppArgs = CommandLineArgsParser.getArgs(argsConfig);
+    console.log(replAppArgs.parsedArgs);
 
     if (replAppArgs.initFilePaths) {
       initFilePaths.push(...replAppArgs.initFilePaths);
@@ -78,6 +79,7 @@ export class ReplApp {
     const files = ReplApp.getFiles(args);
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
+
     if (result) {
       console.log(chalk.yellow('All tests succeeded!'));
     } else {
