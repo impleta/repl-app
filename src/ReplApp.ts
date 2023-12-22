@@ -85,7 +85,7 @@ export class ReplApp {
     } else {
       console.log(chalk.red('One or more tests failed'));
     }
-
+    console.log(result);
     // runner.results();
   }
 

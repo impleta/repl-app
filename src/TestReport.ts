@@ -1,3 +1,5 @@
+import {EOL} from 'os';
+
 export type AssertionResult = {
   msg: string;
   assertionText: string;
@@ -8,13 +10,23 @@ export type AssertionResult = {
 
 export class TestReport {
   filePath: string;
-  testContent: string;
+  private _testContent = '';
   assertionResults: AssertionResult[] = [];
   success = true;
+  lines: string[] = [];
+
+  get testContent(): string {
+    return this._testContent;
+  }
+
+  set testContent(content: string) {
+    this._testContent = content;
+    this.lines = this._testContent.split(EOL);
+  }
 
   constructor(filePath: string) {
     this.filePath = filePath;
-    this.testContent = '';
+    this._testContent = '';
   }
 
   addAssertionResult(result: AssertionResult) {
