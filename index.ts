@@ -2,6 +2,7 @@
 
 import {ParseArgsConfig} from 'util';
 import {ReplApp} from './src/ReplApp';
+import { REPLServer } from 'repl';
 
 const argsConfig: ParseArgsConfig = {
   options: {

@@ -13,12 +13,12 @@ export class TestRunReport {
   }
 
   getResult() {
-    let runResult = true;
+    let allTestsSucceeded = true;
 
     // get the top level ejs template
     // Set some of the test run data 
     // such as date time, command line args etc
-    runResult = this.testReports?.every(r => r.success);
+    allTestsSucceeded = this.testReports?.every(r => r.success);
  
     const templatePath = Path.join(ReplUtil.DirName, 'report.ejs');
     const outputHtmlFileName = 'report.html';
@@ -31,9 +31,15 @@ export class TestRunReport {
     // Write the compiled HTML content to the output file
     fs.writeFileSync(
       outputHtmlPath,
-      compiledTemplate({testReports: this.testReports})
+      compiledTemplate({
+        runResult: {
+          allTestsSucceeded: allTestsSucceeded,
+          date: new Date(),
+        },
+        testReports: this.testReports,
+      })
     );
  
-    return runResult;
+    return allTestsSucceeded;
   }
 }

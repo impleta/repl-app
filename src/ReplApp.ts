@@ -25,7 +25,7 @@ export class ReplApp {
     optionsDescription?: {[option: string]: string}
   ) {
     const replAppArgs = CommandLineArgsParser.getArgs(argsConfig);
-    console.log(replAppArgs.parsedArgs);
+    // console.log(replAppArgs.parsedArgs);
 
     if (replAppArgs.initFilePaths) {
       initFilePaths.push(...replAppArgs.initFilePaths);
@@ -34,7 +34,7 @@ export class ReplApp {
     // TODO: This belongs in the actual repls, not in repl-app
     if (replAppArgs.parsedArgs.values['help'] as string) {
       ReplApp.showHelpText(optionsDescription);
-      return;
+      return true;
     }
     let initFileContents: LooseObject = {};
 
@@ -50,9 +50,9 @@ export class ReplApp {
     const replContext = ReplApp.getContext();
 
     if (replAppArgs.scriptPaths.length === 0) {
-      ReplApp.startRepl(replContext, initFileContents);
+      return ReplApp.startRepl(replContext, initFileContents);
     } else {
-      ReplApp.startBatchRepl(
+      return await ReplApp.startBatchRepl(
         replContext,
         initFileContents,
         replAppArgs.scriptPaths
@@ -75,7 +75,6 @@ export class ReplApp {
     initFileContents: LooseObject,
     args: string[]
   ) {
-
     const files = ReplApp.getFiles(args);
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
@@ -85,8 +84,8 @@ export class ReplApp {
     } else {
       console.log(chalk.red('One or more tests failed'));
     }
-    console.log(result);
-    // runner.results();
+
+    return result;
   }
 
   static startRepl(
