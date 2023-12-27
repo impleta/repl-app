@@ -52,16 +52,15 @@
   <!-- template.ejs -->
 
 <div class="test-runner-output">
-  <span><%= runResult.allTestsSucceeded ? "All tests Succeeded" : "Some tests failed"%> </span>
+  <span><%= `${runResult.successfulTestsCount} of ${runResult.totalTests} tests Succeeded`%> </span>
   <span><%= runResult.date %> </span>
   <% testReports.forEach((report) => { -%>
     <div class="test-output">
       <span><%= report.filePath %></span>
       <span><%= report.success ? "Succeeded" : "Failed" %></span>
-      <pre contenteditable="false" spellcheck="false">
-      <% report.lines.forEach((line) => { -%>
-<span class="code-line"><%= line %></span>
-      <% }); -%>
+<pre contenteditable="false" spellcheck="false">
+<% report.lines.forEach((line) => { -%><span class="code-line"><%= line %></span>
+<% }); -%>
     </pre>
     </div>
   <% }); -%>

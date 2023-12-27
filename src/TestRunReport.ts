@@ -13,15 +13,19 @@ export class TestRunReport {
   }
 
   getResult() {
-    let allTestsSucceeded = true;
+    const successfulTestsCount = this.testReports.filter(r => r.success).length;
 
-    // get the top level ejs template
-    // Set some of the test run data 
-    // such as date time, command line args etc
-    allTestsSucceeded = this.testReports?.every(r => r.success);
- 
     const templatePath = Path.join(ReplUtil.DirName, 'report.ejs');
-    const outputHtmlFileName = 'report.html';
+    const date = new Date();
+    const isoDate = date.toISOString();
+    const formattedDate = isoDate
+      .replace(/[-:]/g, '')
+      .replace(/T/, '_')
+      .replace(/Z/, '')
+      .split('.')[0];
+
+    const outputHtmlFileName = `TestReport_${formattedDate}.html`;
+
     const outputHtmlPath = Path.join(process.cwd(), outputHtmlFileName);
 
     // Compile EJS template
@@ -33,13 +37,15 @@ export class TestRunReport {
       outputHtmlPath,
       compiledTemplate({
         runResult: {
-          allTestsSucceeded: allTestsSucceeded,
-          date: new Date(),
+          title: `Test Report ${formattedDate}`,
+          date: date.toLocaleString(),
+          totalTests: this.testReports.length,
+          successfulTestsCount: successfulTestsCount,
         },
         testReports: this.testReports,
       })
     );
  
-    return allTestsSucceeded;
+    return successfulTestsCount > 0;
   }
 }
