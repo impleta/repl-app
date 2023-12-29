@@ -7,8 +7,6 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #f6f8fa;
-            font-family: 'Roboto Mono', monospace;
         }
 
         .test-runner-output {
@@ -20,10 +18,21 @@
 
         .test-output {
             background-color: #fff;
-            padding: 0;
+            display: flex;
+            font-family: 'Roboto Mono', monospace;
             margin: 0;
+            padding: 0;
         }
 
+        .left-column,
+        .right-column {
+            overflow-x: auto;
+            margin: 0;
+            text-align: left;
+            line-height: 1;
+            font-size: 10px;
+        }
+        
         pre {
           background: #303030;
           color: #f1f1f1;
@@ -55,13 +64,19 @@
   <span><%= `${runResult.successfulTestsCount} of ${runResult.totalTests} tests Succeeded`%> </span>
   <span><%= runResult.date %> </span>
   <% testReports.forEach((report) => { -%>
-    <div class="test-output">
+    <div>
       <span><%= report.filePath %></span>
       <span><%= report.success ? "Succeeded" : "Failed" %></span>
-<pre contenteditable="false" spellcheck="false">
+      <div class="test-output">
+<pre class="left-column" contenteditable="false" spellcheck="false">
 <% report.lines.forEach((line) => { -%><span class="code-line"><%= line %></span>
 <% }); -%>
     </pre>
+    <div class="right-column">
+      <% report.lines.forEach((line) => { -%><div><%= "line" %></div>
+<% }); -%>
+    </div>
+  </div>
     </div>
   <% }); -%>
 </div>
