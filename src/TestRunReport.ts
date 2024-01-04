@@ -11,7 +11,7 @@ export class TestRunReport {
   constructor(testReports: TestReport[]) {
     this.testReports = testReports;
   }
-
+ 
   getResult() {
     const successfulTestsCount = this.testReports.filter(r => r.success).length;
 

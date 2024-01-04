@@ -8,7 +8,7 @@ class ReplAssert {
   static successMessageHandler = (assertion: string) => {
     console.log(chalk.yellow(`Success!: ${assertion}`));
   };
-
+ 
   static failureMessageHandler(
     assertion: string,
     e: Error,
@@ -16,11 +16,12 @@ class ReplAssert {
   ) {
     const lineNumber = ReplAssert.getLineNumber(e);
     const msg = `Failed!: ${assertion}: line ${lineNumber}`;
-    console.log(chalk.red(msg));
+    console.log(chalk.red(`msg: ${msg}`));
+    // console.log(chalk.red(`e: ${JSON.stringify(e)}`));
 
     if (report) {
       report.addAssertionResult({
-        msg: msg,
+        msg: e.message,
         assertionText: assertion,
         success: false,
         lineNumber: lineNumber,
@@ -46,7 +47,7 @@ class ReplAssert {
    *
    * TODO:
    *  Currently, we cannot determine line # when an assertion succeeds. One way to achieve
-   *  that is to use create hashes of assert statements and keep track of which assert
+   *  that is to create hashes of assert statements and keep track of which assert
    *  is on which line.
    */
   static createAssertProxy(obj: AssertStatic, report?: TestReport) {

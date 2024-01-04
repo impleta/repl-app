@@ -22,6 +22,12 @@ export class TestReport {
   set testContent(content: string) {
     this._testContent = content;
     this.lines = this._testContent.split(EOL);
+
+    this.assertionResults = Array<AssertionResult>(this.lines.length).fill({
+      msg: '',
+      assertionText: '',
+      success: true,
+    });
   }
 
   constructor(filePath: string) {
@@ -30,7 +36,10 @@ export class TestReport {
   }
 
   addAssertionResult(result: AssertionResult) {
-    this.assertionResults.push(result);
+    if (result.lineNumber) {
+      this.assertionResults[result.lineNumber - 1] = result;
+    }
+
     this.success &&= result.success;
   }
 
