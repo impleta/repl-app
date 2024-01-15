@@ -16,10 +16,11 @@
     "clean": "gts clean",
     "compile": "tsc",
     "dev": "tsc-watch --onSuccess \"npm run postcompile\"",
-    "postcompile": "npm run addJsSuffix && npm run copyDts && npm run fixDts && echo 'Ready...'",
+    "postcompile": "npm run addJsSuffix && npm run copyDts && npm run fixDts && npm run copyAssets && echo 'Ready...'",
     "addJsSuffix": "npx replace-in-file --configFile=replace-config.cjs --quiet",
     "copyDts": "npx copyfiles -f \"build/src/**/*.d.ts\" @types",
     "fixDts": "npx replace-in-file --configFile=replace-config-dts.cjs --quiet",
+    "copyAssets": "npx copyfiles -f \"src/reporting/*.ejs\" \"build/src\"",
     "fix": "gts fix",
     "prepare": "npm.cmd run compile",
     "pretest": "npm.cmd run compile",
@@ -29,6 +30,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/chai": "^4.3.6",
+    "@types/ejs": "^3.1.5",
     "@types/glob": "^8.0.1",
     "@types/jest": "^29.5.5",
     "@types/multistream": "^4.1.0",
@@ -45,6 +47,7 @@
   "dependencies": {
     "chai": "^4.3.8",
     "chalk": "^5.3.0",
+    "ejs": "^3.1.9",
     "glob": "^8.1.0",
     "node": "^20.6.0"
   }

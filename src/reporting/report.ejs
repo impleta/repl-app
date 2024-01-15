@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+          margin: 0;
+          padding: 0;
+        }
+
+        .test-runner-output {
+          border: 1px solid #d1d5da;
+          border-radius: 6px;
+          overflow: hidden;
+          margin: 10px;
+          padding: 10px;
+          background-color: #f7f7f7;
+        }
+
+        .test-output {
+          background-color: #fff;
+          display: flex;
+          font-family: 'Roboto Mono', monospace;
+          margin: 0;
+          padding: 10px;
+          border-radius: 4px;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)
+        }
+
+        .left-column,
+        .right-column {
+          overflow-x: auto;
+          margin: 0;
+          padding: 10px;
+          text-align: left;
+        }
+        /*
+        .left-column {
+          background: #2c3e50;
+          color: #ecf0f1;
+        }
+        */
+        .code-line {
+          counter-increment: line;
+          margin-bottom: 10px;
+        }
+
+        .code-line:before {
+          content: counter(line);
+          display: inline-block;
+          padding-right: 10px;
+          color: #3498db;
+          font-weight: bold;
+          width: 1.5em; /* this should be variable based on number of lines. 0.5 for each digit */
+        }
+
+        .right-column {
+            padding-left: 20px;
+        }
+
+        .test-run-info {
+          margin-bottom: 10px;
+          color: #777;
+        }
+
+        .test-output div {
+          margin-bottom: 5px;
+        }
+
+        .failed-message {
+          color: #e74c3c;
+        }
+
+        .succeeded-message {
+          color: #2ecc71;
+        }
+    </style>
+    <title><%= runResult.title %></title>
+</head>
+<body>
+<%
+function getAssertionResultText(assertionResult) {
+  if(assertionResult.success) {
+    // return "&nbsp;";
+    return "<div>&#x200b;</div>"
+  }
+  return `<div class="failed-message">Failed! ${assertionResult.msg}</div>`;
+}
+%>
+<div class="test-runner-output">
+  <div class="test-run-info">
+    <span><%= `${runResult.successfulTestsCount} of ${runResult.totalTests} tests Succeeded`%> </span>
+    <span><%= runResult.date %> </span>
+  </div>
+  <% testReports.forEach((report) => { -%>
+    <div>
+      <span><%= report.filePath %></span>
+      <span><%= report.success ? "Succeeded" : "Failed" %></span>
+      <div class="test-output">
+        <div class="left-column">
+        <% report.lines.forEach((line) => { -%><div class="code-line"><%- line %></div>
+        <% }); -%>
+        </div>
+        <div class="right-column">
+          <% report.assertionResults.forEach((result) => { -%>
+            <%- getAssertionResultText(result) -%>
+    <% }); -%>
+        </div>
+      </div>
+    </div>
+  <% }); -%>
+</div>
