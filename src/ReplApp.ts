@@ -48,6 +48,7 @@ export class ReplApp {
     };
 
     const replAppArgs = CommandLineArgsParser.getArgs(argsConfig);
+    // console.log(replAppArgs.parsedArgs);
 
     if (replAppArgs.initFilePaths) {
       initFilePaths.push(...replAppArgs.initFilePaths);
@@ -97,7 +98,7 @@ export class ReplApp {
     initFileContents: LooseObject,
     args: ReplAppArgs
   ) {
-    const files = ReplApp.getFiles(args.scriptPaths);
+    const files = ReplApp.getFiles(args);
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
 

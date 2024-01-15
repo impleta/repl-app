@@ -48,8 +48,10 @@ class ReplAssert {
    * TODO:
    *  Currently, we cannot determine line # when an assertion succeeds. One way to achieve
    *  that is to create hashes of assert statements and keep track of which assert
+   *  that is to create hashes of assert statements and keep track of which assert
    *  is on which line.
    */
+  static createAssertProxy(obj: AssertStatic, report?: TestReport) {
   static createAssertProxy(obj: AssertStatic, report?: TestReport) {
     return new Proxy(obj, {
       get(target: AssertStatic, prop: keyof AssertStatic) {
@@ -66,7 +68,7 @@ class ReplAssert {
                 ReplAssert.failureMessageHandler(
                   reconstructedAssertion,
                   e as Error,
-                  report
+                  report,
                 );
               }
             },
