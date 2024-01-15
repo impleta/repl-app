@@ -35,12 +35,12 @@
           padding: 10px;
           text-align: left;
         }
-        
+        /*
         .left-column {
           background: #2c3e50;
           color: #ecf0f1;
         }
-
+        */
         .code-line {
           counter-increment: line;
           margin-bottom: 10px;
@@ -59,9 +59,8 @@
             padding-left: 20px;
         }
 
-        .test-info {
+        .test-run-info {
           margin-bottom: 10px;
-          font-size: 0.9em;
           color: #777;
         }
 
@@ -90,7 +89,7 @@ function getAssertionResultText(assertionResult) {
 }
 %>
 <div class="test-runner-output">
-  <div class="test-info">
+  <div class="test-run-info">
     <span><%= `${runResult.successfulTestsCount} of ${runResult.totalTests} tests Succeeded`%> </span>
     <span><%= runResult.date %> </span>
   </div>
@@ -100,7 +99,7 @@ function getAssertionResultText(assertionResult) {
       <span><%= report.success ? "Succeeded" : "Failed" %></span>
       <div class="test-output">
         <div class="left-column">
-        <% report.lines.forEach((line) => { -%><div class="code-line"><%= line %></div>
+        <% report.lines.forEach((line) => { -%><div class="code-line"><%- line %></div>
         <% }); -%>
         </div>
         <div class="right-column">

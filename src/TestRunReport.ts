@@ -11,7 +11,7 @@ export class TestRunReport {
   constructor(testReports: TestReport[]) {
     this.testReports = testReports;
   }
- 
+
   getResult() {
     const successfulTestsCount = this.testReports.filter(r => r.success).length;
 
@@ -45,7 +45,7 @@ export class TestRunReport {
         testReports: this.testReports,
       })
     );
- 
-    return successfulTestsCount > 0;
+
+    return successfulTestsCount === this.testReports.length;
   }
 }

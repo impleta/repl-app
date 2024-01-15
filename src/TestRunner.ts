@@ -1,5 +1,4 @@
 import * as vm from 'vm';
-import * as fs from 'fs';
 import {Test} from './Test';
 import {TestRunReport} from './TestRunReport';
 
