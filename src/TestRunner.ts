@@ -45,6 +45,6 @@ export class TestRunner {
     const results = await Promise.all(promises);
     const testRunReport = new TestRunReport(results);
 
-    return testRunReport.getResult();
+    return testRunReport.getResult(this.context.CommandLineArgs);
   }
 }

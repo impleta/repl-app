@@ -1,6 +1,5 @@
 import * as repl from 'repl';
 import * as fs from 'fs';
-import * as vm from 'vm';
 import chalk from 'chalk';
 import glob from 'glob';
 import Path from 'path';
@@ -15,7 +14,17 @@ interface LooseObject {
 }
 
 export class ReplApp {
-  static replAppArgs: ReplAppArgs;
+  static replArgsConfig: ParseArgsConfig = {
+    options: {
+      initFile: {
+        type: 'string',
+        multiple: true,
+      },
+      configFile: {
+        type: 'string',
+      },
+    },
+  };
 
   static imports = new Map();
 
@@ -24,8 +33,12 @@ export class ReplApp {
     argsConfig?: ParseArgsConfig,
     optionsDescription?: {[option: string]: string}
   ) {
+    argsConfig = {
+      ...argsConfig,
+      ...ReplApp.replArgsConfig,
+    };
+
     const replAppArgs = CommandLineArgsParser.getArgs(argsConfig);
-    // console.log(replAppArgs.parsedArgs);
 
     if (replAppArgs.initFilePaths) {
       initFilePaths.push(...replAppArgs.initFilePaths);
@@ -79,10 +92,14 @@ export class ReplApp {
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
 
-    if (result) {
+    if (result.succeeded) {
       console.log(chalk.yellow('All tests succeeded!'));
     } else {
       console.log(chalk.red('One or more tests failed'));
+    }
+
+    if (result.resultsFile) {
+      console.log(chalk.green(`Results saved to ${result.resultsFile}`));
     }
 
     return result;

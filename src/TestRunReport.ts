@@ -4,6 +4,7 @@ import Path from 'path';
 
 import {TestReport} from './TestReport';
 import {ReplUtil} from './ReplUtil';
+import {ReplAppArgs} from './CommandLineArgsParser';
 
 export class TestRunReport {
   testReports: TestReport[] = [];
@@ -12,8 +13,10 @@ export class TestRunReport {
     this.testReports = testReports;
   }
 
-  getResult() {
+  getResult(commandLineArgs: ReplAppArgs) {
     const successfulTestsCount = this.testReports.filter(r => r.success).length;
+
+    console.log(commandLineArgs.parsedArgs.values?.outputFile);
 
     const templatePath = Path.join(ReplUtil.DirName, 'report.ejs');
     const date = new Date();
@@ -46,6 +49,11 @@ export class TestRunReport {
       })
     );
 
-    return successfulTestsCount === this.testReports.length;
+    const results = {
+      succeeded: successfulTestsCount === this.testReports.length,
+      resultsFile: outputHtmlPath,
+    };
+
+    return results;
   }
 }

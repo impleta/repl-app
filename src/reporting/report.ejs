@@ -82,10 +82,18 @@
 <%
 function getAssertionResultText(assertionResult) {
   if(assertionResult.success) {
-    // return "&nbsp;";
     return "<div>&#x200b;</div>"
   }
   return `<div class="failed-message">Failed! ${assertionResult.msg}</div>`;
+}
+const codeLines = [];
+const assertionLines = [];
+
+function buildCodeAndAssertions(report) {
+  report.lines.forEach((line, index) => {
+    const success = report.assertionResults[index].success;
+    
+  })
 }
 %>
 <div class="test-runner-output">
