@@ -23,6 +23,15 @@ export class ReplApp {
       configFile: {
         type: 'string',
       },
+      'report.generate': {
+        type: 'boolean',
+      },
+      'report.folder': {
+        type: 'string',
+      },
+      'report.filePath': {
+        type: 'string',
+      },
     },
   };
 
@@ -49,14 +58,14 @@ export class ReplApp {
       ReplApp.showHelpText(optionsDescription);
       return true;
     }
-    let initFileContents: LooseObject = {};
+    //let initFileContents: LooseObject = {};
 
     const contents = await Promise.all(
       initFilePaths.map(async p => await ReplApp.getInitFileContents(p))
     );
 
-    initFileContents = Object.assign(
-      {CommandLineArgs: replAppArgs},
+    const initFileContents = Object.assign(
+      {},
       ...contents
     );
 
@@ -68,7 +77,7 @@ export class ReplApp {
       return await ReplApp.startBatchRepl(
         replContext,
         initFileContents,
-        replAppArgs.scriptPaths
+        replAppArgs
       );
     }
   }
@@ -86,11 +95,13 @@ export class ReplApp {
   static async startBatchRepl(
     replContext: repl.ReplOptions,
     initFileContents: LooseObject,
-    args: string[]
+    args: ReplAppArgs
   ) {
-    const files = ReplApp.getFiles(args);
+    const files = ReplApp.getFiles(args.scriptPaths);
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
+
+    console.log(args.parsedArgs.values['report.generate']);
 
     if (result.succeeded) {
       console.log(chalk.yellow('All tests succeeded!'));

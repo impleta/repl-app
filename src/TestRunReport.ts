@@ -16,7 +16,7 @@ export class TestRunReport {
   getResult(commandLineArgs: ReplAppArgs) {
     const successfulTestsCount = this.testReports.filter(r => r.success).length;
 
-    console.log(commandLineArgs.parsedArgs.values?.outputFile);
+    // console.log(commandLineArgs.parsedArgs.values?.outputFile);
 
     const templatePath = Path.join(ReplUtil.DirName, 'report.ejs');
     const date = new Date();
