@@ -98,7 +98,7 @@ export class ReplApp {
     initFileContents: LooseObject,
     args: ReplAppArgs
   ) {
-    const files = ReplApp.getFiles(args);
+    const files = ReplApp.getFiles(args.scriptPaths);
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
 

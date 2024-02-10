@@ -52,7 +52,6 @@ class ReplAssert {
    *  is on which line.
    */
   static createAssertProxy(obj: AssertStatic, report?: TestReport) {
-  static createAssertProxy(obj: AssertStatic, report?: TestReport) {
     return new Proxy(obj, {
       get(target: AssertStatic, prop: keyof AssertStatic) {
         if (typeof target[prop] === 'function') {
