@@ -48,7 +48,6 @@ export class ReplApp {
     };
 
     const replAppArgs = CommandLineArgsParser.getArgs(argsConfig);
-    // console.log(replAppArgs.parsedArgs);
 
     if (replAppArgs.initFilePaths) {
       initFilePaths.push(...replAppArgs.initFilePaths);

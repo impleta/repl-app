@@ -6,6 +6,7 @@ type AssertStatic = typeof assert;
 
 class ReplAssert {
   static successMessageHandler = (assertion: string) => {
+    // TestRunner.AssertionSuccessHandler(assertion);
     console.log(chalk.yellow(`Success!: ${assertion}`));
   };
  
@@ -47,7 +48,6 @@ class ReplAssert {
    *
    * TODO:
    *  Currently, we cannot determine line # when an assertion succeeds. One way to achieve
-   *  that is to create hashes of assert statements and keep track of which assert
    *  that is to create hashes of assert statements and keep track of which assert
    *  is on which line.
    */

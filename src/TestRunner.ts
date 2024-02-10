@@ -42,7 +42,6 @@ export class TestRunner {
       return await test.run(this.context, this.linker);
     });
 
-
     const results = await Promise.all(promises);
     const testRunReport = new TestRunReport(results);
 

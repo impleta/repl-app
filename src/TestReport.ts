@@ -18,7 +18,7 @@ export class TestReport {
   get testContent(): string {
     return this._testContent;
   }
- 
+
   set testContent(content: string) {
     this._testContent = content;
     this.lines = this._testContent.split(EOL);
