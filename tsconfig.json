@@ -8,7 +8,9 @@
     "moduleResolution": "node",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "lib": ["ES2019"]
+    "lib": ["ES2019"],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
   },
   "include": [
       "src/**/*.ts"
