@@ -5,6 +5,7 @@ import Path from 'path';
 import {TestReport} from './TestReport';
 import {ReplUtil} from './ReplUtil';
 import {ReplAppArgs} from './CommandLineArgsParser';
+import {Container} from 'typedi';
 
 export class TestRunReport {
   testReports: TestReport[] = [];
@@ -13,10 +14,20 @@ export class TestRunReport {
     this.testReports = testReports;
   }
 
-  getResult(commandLineArgs: ReplAppArgs) {
+  getResult() {
     const successfulTestsCount = this.testReports.filter(r => r.success).length;
 
-    // console.log(commandLineArgs.parsedArgs.values?.outputFile);
+    let results = {
+      succeeded: successfulTestsCount === this.testReports.length,
+      resultsFile: null as unknown,
+    };
+
+    const replAppArgs = Container.get<ReplAppArgs>('REPL-APP-ARGS');
+    const generateReport = replAppArgs.parsedArgs.values['report.generate'];
+
+    if (!generateReport) {
+      return results;
+    }
 
     const templatePath = Path.join(ReplUtil.DirName, 'report.ejs');
     const date = new Date();
@@ -49,8 +60,8 @@ export class TestRunReport {
       })
     );
 
-    const results = {
-      succeeded: successfulTestsCount === this.testReports.length,
+    results = {
+      ...results,
       resultsFile: outputHtmlPath,
     };
 

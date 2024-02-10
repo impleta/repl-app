@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import * as repl from 'repl';
 import * as fs from 'fs';
 import chalk from 'chalk';
@@ -8,6 +9,7 @@ import {CommandLineArgsParser, ReplAppArgs} from './CommandLineArgsParser';
 import {ParseArgsConfig} from 'util';
 import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
+import {Container} from 'typedi';
 
 interface LooseObject {
   [key: string]: unknown;
@@ -64,12 +66,11 @@ export class ReplApp {
       initFilePaths.map(async p => await ReplApp.getInitFileContents(p))
     );
 
-    const initFileContents = Object.assign(
-      {},
-      ...contents
-    );
+    const initFileContents = Object.assign({}, ...contents);
 
     const replContext = ReplApp.getContext();
+
+    Container.set('REPL-APP-ARGS', replAppArgs);
 
     if (replAppArgs.scriptPaths.length === 0) {
       return ReplApp.startRepl(replContext, initFileContents);
@@ -100,8 +101,6 @@ export class ReplApp {
     const files = ReplApp.getFiles(args.scriptPaths);
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
-
-    console.log(args.parsedArgs.values['report.generate']);
 
     if (result.succeeded) {
       console.log(chalk.yellow('All tests succeeded!'));
