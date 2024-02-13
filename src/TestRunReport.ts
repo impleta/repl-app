@@ -29,7 +29,10 @@ export class TestRunReport {
       return results;
     }
 
-    const templatePath = Path.join(ReplUtil.DirName, 'report.ejs');
+    const templatePath = Path.join(
+      ReplUtil.DirName(import.meta.url),
+      'report.ejs'
+    );
     const date = new Date();
     const isoDate = date.toISOString();
     const formattedDate = isoDate

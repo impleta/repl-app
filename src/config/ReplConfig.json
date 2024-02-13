@@ -1,0 +1,8 @@
+{
+  "initFiles": [],
+  "report": {
+    "generate": false,
+    "folder": ".",
+    "filePath": "TestReport_${datetime}.html"
+  }
+}

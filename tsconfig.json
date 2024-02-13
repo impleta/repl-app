@@ -6,6 +6,7 @@
     "module": "ESNext",
     "baseUrl": ".",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "lib": ["ES2019"],

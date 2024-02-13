@@ -10,6 +10,7 @@ import {ParseArgsConfig} from 'util';
 import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
 import {Container} from 'typedi';
+import {ReplConfig} from './ReplConfig';
 
 interface LooseObject {
   [key: string]: unknown;
@@ -44,6 +45,10 @@ export class ReplApp {
     argsConfig?: ParseArgsConfig,
     optionsDescription?: {[option: string]: string}
   ) {
+
+    const reportFilePath = ReplConfig.getReportFilePath();
+
+    console.log(`Config file says save to ${reportFilePath}`);
     argsConfig = {
       ...argsConfig,
       ...ReplApp.replArgsConfig,
@@ -60,7 +65,6 @@ export class ReplApp {
       ReplApp.showHelpText(optionsDescription);
       return true;
     }
-    //let initFileContents: LooseObject = {};
 
     const contents = await Promise.all(
       initFilePaths.map(async p => await ReplApp.getInitFileContents(p))
@@ -156,23 +160,6 @@ export class ReplApp {
   static getContext(): repl.ReplOptions {
     const replContext = {ignoreUndefined: true};
     return replContext;
-  }
-
-  static getJSONFileContentsAsObject(jsonFileName: string) {
-    // TODO: For now, cannot use dynamic imports with JSON files without the experimental switch,
-    // TODO: so simply read the file and deserialize. Can later merge with the getInitFileContents
-    // TODO: code above once the switch is no longer needed
-    const path = ReplApp.getAbsolutePath(jsonFileName);
-    return JSON.parse(fs.readFileSync(path, 'utf-8'));
-  }
-
-  static getAbsolutePath(p: string) {
-    if (Path.isAbsolute(p)) {
-      return p;
-    }
-
-    const __dirname = process.cwd();
-    return Path.join(__dirname, p);
   }
 
   /**
