@@ -1,14 +1,8 @@
 import {ReplUtil} from './ReplUtil';
 import Path from 'path';
+import {ParsedArgs} from './CommandLineArgsParser';
 
-type ReplConfigType = {
-  initFiles?: [];
-  report?: {
-    generate: boolean;
-    folder?: string;
-    filePath?: string;
-  };
-};
+type ReplConfigType = ParsedArgs['values'];
 
 export class ReplConfig {
   private static _config: ReplConfigType;
@@ -32,7 +26,8 @@ export class ReplConfig {
 
   static getReportFilePath() {
     const config = ReplConfig.config;
-    const filePath = config?.report?.filePath ?? 'MadeUpTestReport_${datetime}';
+    const filePath =
+      (config['report-filePath'] as string) ?? 'MadeUpTestReport_${datetime}';
     const date = new Date();
     const isoDate = date.toISOString();
     const datetime = isoDate

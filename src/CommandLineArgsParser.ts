@@ -9,7 +9,7 @@ type ReturnType<T extends (...args: never[]) => never> = T extends (
 ) => infer R
   ? R
   : never;
-type ParsedArgs = ReturnType<typeof parseArgs>;
+export type ParsedArgs = ReturnType<typeof parseArgs>;
 
 export type ReplAppArgs = {
   initFilePaths: string[];

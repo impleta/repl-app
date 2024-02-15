@@ -23,7 +23,7 @@ export class TestRunReport {
     };
 
     const replAppArgs = Container.get<ReplAppArgs>('REPL-APP-ARGS');
-    const generateReport = replAppArgs.parsedArgs.values['report.generate'];
+    const generateReport = replAppArgs.parsedArgs.values['report-generate'];
 
     if (!generateReport) {
       return results;
@@ -41,7 +41,13 @@ export class TestRunReport {
       .replace(/Z/, '')
       .split('.')[0];
 
-    const outputHtmlFileName = `TestReport_${formattedDate}.html`;
+    let outputHtmlFileName = replAppArgs.parsedArgs.values[
+      'report-filePath'
+    ] as string;
+ 
+    outputHtmlFileName =
+      outputHtmlFileName?.replace(/\${datetime}/g, formattedDate) ??
+      `TestReport_${formattedDate}.html`;
 
     const outputHtmlPath = Path.join(process.cwd(), outputHtmlFileName);
 

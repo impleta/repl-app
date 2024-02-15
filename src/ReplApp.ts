@@ -26,13 +26,13 @@ export class ReplApp {
       configFile: {
         type: 'string',
       },
-      'report.generate': {
+      'report-generate': {
         type: 'boolean',
       },
-      'report.folder': {
+      'report-folder': {
         type: 'string',
       },
-      'report.filePath': {
+      'report-filePath': {
         type: 'string',
       },
     },
@@ -48,20 +48,26 @@ export class ReplApp {
 
     const reportFilePath = ReplConfig.getReportFilePath();
 
-    console.log(`Config file says save to ${reportFilePath}`);
+    // console.log(`Config file says save to ${reportFilePath}`);
     argsConfig = {
       ...argsConfig,
       ...ReplApp.replArgsConfig,
     };
+ 
+    const cmdLineArgs = CommandLineArgsParser.getArgs(argsConfig);
 
-    const replAppArgs = CommandLineArgsParser.getArgs(argsConfig);
+    const config = ReplConfig.getConfig();
+    cmdLineArgs.parsedArgs.values = {
+      ...config,
+      ...cmdLineArgs.parsedArgs.values,
+    };
 
-    if (replAppArgs.initFilePaths) {
-      initFilePaths.push(...replAppArgs.initFilePaths);
+    if (config.initFiles) {
+      initFilePaths.push(...(config.initFiles as []));
     }
 
     // TODO: This belongs in the actual repls, not in repl-app
-    if (replAppArgs.parsedArgs.values['help'] as string) {
+    if (cmdLineArgs.parsedArgs.values['help'] as string) {
       ReplApp.showHelpText(optionsDescription);
       return true;
     }
@@ -74,15 +80,15 @@ export class ReplApp {
 
     const replContext = ReplApp.getContext();
 
-    Container.set('REPL-APP-ARGS', replAppArgs);
+    Container.set('REPL-APP-ARGS', cmdLineArgs);
 
-    if (replAppArgs.scriptPaths.length === 0) {
+    if (cmdLineArgs.scriptPaths.length === 0) {
       return ReplApp.startRepl(replContext, initFileContents);
     } else {
       return await ReplApp.startBatchRepl(
         replContext,
         initFileContents,
-        replAppArgs
+        cmdLineArgs
       );
     }
   }
