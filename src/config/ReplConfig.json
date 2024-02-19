@@ -2,5 +2,5 @@
   "initFiles": [],
   "report-generate": false,
   "report-folder": ".",
-  "report-filePath": "TestReportMy_${datetime}.html"
+  "report-filePath": "TestReport_${datetime}.html"
 }
