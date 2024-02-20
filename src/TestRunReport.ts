@@ -1,4 +1,4 @@
-import ejs from 'ejs';
+import * as ejs from 'ejs';
 import * as fs from 'fs';
 import Path from 'path';
 
@@ -23,6 +23,7 @@ export class TestRunReport {
     };
 
     const replAppArgs = Container.get<ReplAppArgs>('REPL-APP-ARGS');
+
     const generateReport = replAppArgs.parsedArgs.values['report-generate'];
 
     if (!generateReport) {
@@ -33,6 +34,7 @@ export class TestRunReport {
       ReplUtil.DirName(import.meta.url),
       'report.ejs'
     );
+
     const date = new Date();
     const isoDate = date.toISOString();
     const formattedDate = isoDate
@@ -51,7 +53,6 @@ export class TestRunReport {
 
     const outputHtmlPath = Path.join(process.cwd(), outputHtmlFileName);
 
-    // Compile EJS template
     const templateString = fs.readFileSync(templatePath, 'utf8');
     const compiledTemplate = ejs.compile(templateString);
 
@@ -65,7 +66,7 @@ export class TestRunReport {
           totalTests: this.testReports.length,
           successfulTestsCount: successfulTestsCount,
         },
-        testReports: this.testReports,
+        testReports: this.testReports, 
       })
     );
 
