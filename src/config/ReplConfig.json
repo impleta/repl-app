@@ -1,6 +1,6 @@
 {
-  "initFiles": [],
-  "report-generate": false,
-  "report-folder": ".",
-  "report-filePath": "TestReport_${datetime}.html"
+	"initFiles": [],
+	"report-generate": false,
+	"report-folder": ".",
+	"report-filePath": "TestReport_${datetime}.html"
 }

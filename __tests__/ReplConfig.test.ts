@@ -1,4 +1,4 @@
-import {expect, expectTypeOf, test, vi, beforeAll} from 'vitest';
+import {expect, expectTypeOf, test} from 'vitest';
 import {ReplConfig, ReplConfigType} from '../src/config/ReplConfig';
 
 // TODO: These tests actually modify ReplConfig.json, ideally, we should mock file operations.
@@ -25,7 +25,7 @@ test('getConfigValue returns undefined if key is not found in config file', () =
   expect(configValue).toBeUndefined();
 });
 
-test('getConfigValue returns the current value of key', () => {
+test('getConfigValue returns the current value of specfied key', () => {
   const configValue = ReplConfig.getConfigValue('report-filePath');
 
   expect(configValue).toEqual('TestReport_${datetime}.html');

@@ -35,6 +35,9 @@ export class ReplApp {
       'report-filePath': {
         type: 'string',
       },
+      'get-config': {
+        type: 'string',
+      }
     },
   };
 
@@ -54,7 +57,14 @@ export class ReplApp {
  
     const cmdLineArgs = CommandLineArgsParser.getArgs(argsConfig);
 
+    Container.set('REPL-APP-ARGS', cmdLineArgs);
+
+    if (ReplConfig.handleConfigOperation()) {
+      return true;
+    }
+
     const config = ReplConfig.getConfig();
+
     cmdLineArgs.parsedArgs.values = {
       ...config,
       ...cmdLineArgs.parsedArgs.values,
@@ -80,6 +90,11 @@ export class ReplApp {
 
     Container.set('REPL-APP-ARGS', cmdLineArgs);
 
+    /*
+    if (ReplConfig.handleConfigCommands()) {
+      return true;
+    }
+*/
     if (cmdLineArgs.scriptPaths.length === 0) {
       return ReplApp.startRepl(replContext, initFileContents);
     } else {
