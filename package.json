@@ -11,7 +11,7 @@
   },
   "type": "module",
   "scripts": {
-    "test": "vitest",
+    "test": "vitest --typecheck",
     "lint": "gts lint",
     "clean": "gts clean",
     "compile": "tsc",
@@ -20,7 +20,7 @@
     "addJsSuffix": "npx replace-in-file --configFile=replace-config.cjs --quiet",
     "copyDts": "npx copyfiles -f \"build/src/**/*.d.ts\" @types",
     "fixDts": "npx replace-in-file --configFile=replace-config-dts.cjs --quiet",
-    "copyAssets": "npx copyfiles -f \"src/reporting/*.ejs\" \"src/config/*.json\" \"build/src\"",
+    "copyAssets": "npx copyfiles -f \"src/reporting/*.ejs\" \"build/src\" && npx copyfiles -f \"src/config/*.json\" \"build/src/config\"",
     "fix": "gts fix",
     "prepare": "npm.cmd run compile",
     "pretest1": "npm.cmd run compile",

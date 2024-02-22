@@ -17,7 +17,7 @@ class MockReplAppArgs {
     },
   };
 }
-
+ 
 ReplUtil.DirName = vi.fn(_ => 'mockDir');
 const templateString = 'template string';
 

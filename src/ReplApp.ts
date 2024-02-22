@@ -10,7 +10,7 @@ import {ParseArgsConfig} from 'util';
 import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
 import {Container} from 'typedi';
-import {ReplConfig} from './ReplConfig';
+import {ReplConfig} from './config/ReplConfig';
 
 interface LooseObject {
   [key: string]: unknown;
@@ -45,8 +45,6 @@ export class ReplApp {
     argsConfig?: ParseArgsConfig,
     optionsDescription?: {[option: string]: string}
   ) {
-
-    const reportFilePath = ReplConfig.getReportFilePath();
 
     // console.log(`Config file says save to ${reportFilePath}`);
     argsConfig = {
