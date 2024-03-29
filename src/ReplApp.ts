@@ -81,8 +81,6 @@ export class ReplApp {
 
     const replContext = ReplApp.getContext();
 
-    // Container.set('REPL-APP-ARGS', cmdLineArgs);
-
     if (cmdLineArgs.scriptPaths.length === 0) {
       return ReplApp.startRepl(replContext, initFileContents);
     } else {
