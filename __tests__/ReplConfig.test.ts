@@ -5,9 +5,12 @@ import {ReplConfig, ReplConfigType} from '../src/config/ReplConfig';
 
 const defaultConfig = {
   initFiles: [],
-  'report-generate': false,
-  'report-folder': '.',
-  'report-filePath': 'TestReport_${datetime}.html',
+  report: {
+    generate: false,
+    folder: '.',
+    filePath: 'TestReport_${datetime}.html',
+    resultsFile: null,
+  },
 };
 
 test('getConfig returns the contents of ReplConfig.json', () => {
@@ -26,17 +29,17 @@ test('getConfigValue returns undefined if key is not found in config file', () =
 });
 
 test('getConfigValue returns the current value of specfied key', () => {
-  const configValue = ReplConfig.getConfigValue('report-filePath');
+  const configValue = ReplConfig.getConfigValue('report.filePath');
 
   expect(configValue).toEqual('TestReport_${datetime}.html');
 });
 
 test('setConfigValue sets the value correctly', () => {
-  let configValue = ReplConfig.getConfigValue('report-folder');
+  let configValue = ReplConfig.getConfigValue('report.folder');
   expect(configValue).toBe('.');
 
-  ReplConfig.setConfigValues({'report-folder': 'MyNewFolder'});
-  configValue = ReplConfig.getConfigValue('report-folder');
+  ReplConfig.setConfigValues({report: {folder: 'MyNewFolder'}});
+  configValue = ReplConfig.getConfigValue('report.folder');
   expect(configValue).toBe('MyNewFolder');
 
   ReplConfig.setConfigValues(defaultConfig);

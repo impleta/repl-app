@@ -14,8 +14,7 @@ export class ReplUtil {
 
   static getJSONFileContentsAsObject<ContentType>(jsonFileName: string) {
     // TODO: For now, cannot use dynamic imports with JSON files without the experimental switch,
-    // TODO: so simply read the file and deserialize. Can later merge with the getInitFileContents
-    // TODO: code above once the switch is no longer needed
+    // TODO: so simply read the file and deserialize.
     const path = ReplUtil.getAbsolutePath(jsonFileName);
     return JSON.parse(fs.readFileSync(path, 'utf-8')) as ContentType;
   }

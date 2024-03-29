@@ -9,7 +9,6 @@ import {CommandLineArgsParser, ReplAppArgs} from './CommandLineArgsParser';
 import {ParseArgsConfig} from 'util';
 import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
-import {Container} from 'typedi';
 import {ReplConfig} from './config/ReplConfig';
 
 interface LooseObject {
@@ -26,18 +25,21 @@ export class ReplApp {
       configFile: {
         type: 'string',
       },
-      'report-generate': {
+      'report.generate': {
         type: 'boolean',
       },
-      'report-folder': {
+      'report.folder': {
         type: 'string',
       },
-      'report-filePath': {
+      'report.filePath': {
         type: 'string',
       },
       'get-config': {
         type: 'string',
-      }
+      },
+      'set-config': {
+        type: 'string',
+      },
     },
   };
 
@@ -48,27 +50,18 @@ export class ReplApp {
     argsConfig?: ParseArgsConfig,
     optionsDescription?: {[option: string]: string}
   ) {
-
-    // console.log(`Config file says save to ${reportFilePath}`);
     argsConfig = {
       ...argsConfig,
       ...ReplApp.replArgsConfig,
     };
- 
+
     const cmdLineArgs = CommandLineArgsParser.getArgs(argsConfig);
 
-    Container.set('REPL-APP-ARGS', cmdLineArgs);
-
-    if (ReplConfig.handleConfigOperation()) {
-      return true;
+    if (ReplConfig.handleConfigOperation(cmdLineArgs.parsedArgs.values)) {
+      return;
     }
 
-    const config = ReplConfig.getConfig();
-
-    cmdLineArgs.parsedArgs.values = {
-      ...config,
-      ...cmdLineArgs.parsedArgs.values,
-    };
+    const config = ReplConfig.getConfig(cmdLineArgs.parsedArgs.values);
 
     if (config.initFiles) {
       initFilePaths.push(...(config.initFiles as []));
@@ -88,13 +81,8 @@ export class ReplApp {
 
     const replContext = ReplApp.getContext();
 
-    Container.set('REPL-APP-ARGS', cmdLineArgs);
+    // Container.set('REPL-APP-ARGS', cmdLineArgs);
 
-    /*
-    if (ReplConfig.handleConfigCommands()) {
-      return true;
-    }
-*/
     if (cmdLineArgs.scriptPaths.length === 0) {
       return ReplApp.startRepl(replContext, initFileContents);
     } else {
