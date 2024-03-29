@@ -4,8 +4,8 @@ import Path from 'path';
 
 import {TestReport} from './TestReport';
 import {ReplUtil} from './ReplUtil';
-import {ReplAppArgs} from './CommandLineArgsParser';
 import {Container} from 'typedi';
+import {ReplConfigType} from './config/ReplConfig';
 
 export class TestRunReport {
   testReports: TestReport[] = [];
@@ -22,11 +22,9 @@ export class TestRunReport {
       resultsFile: null as unknown,
     };
 
-    const replAppArgs = Container.get<ReplAppArgs>('REPL-APP-ARGS');
+    const replConfig = Container.get<ReplConfigType>('REPL-CONFIG');
 
-    const generateReport = replAppArgs.parsedArgs.values['report-generate'];
-
-    if (!generateReport) {
+    if (!replConfig.report.generate) {
       return results;
     }
 
@@ -43,10 +41,8 @@ export class TestRunReport {
       .replace(/Z/, '')
       .split('.')[0];
 
-    let outputHtmlFileName = replAppArgs.parsedArgs.values[
-      'report-filePath'
-    ] as string;
- 
+    let outputHtmlFileName = replConfig.report.filePath;
+
     outputHtmlFileName =
       outputHtmlFileName?.replace(/\${datetime}/g, formattedDate) ??
       `TestReport_${formattedDate}.html`;
@@ -56,7 +52,6 @@ export class TestRunReport {
     const templateString = fs.readFileSync(templatePath, 'utf8');
     const compiledTemplate = ejs.compile(templateString);
 
-    // Write the compiled HTML content to the output file
     fs.writeFileSync(
       outputHtmlPath,
       compiledTemplate({

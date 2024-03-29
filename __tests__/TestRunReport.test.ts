@@ -9,14 +9,14 @@ import * as Path from 'path';
 import * as ejs from 'ejs';
 
 // Mock the ReplAppArgs class
-class MockReplAppArgs {
-  parsedArgs = {
-    values: {
-      'report-generate': false,
-      'report-filePath': null,
-    },
-  };
-}
+const MockReplAppArgs = {
+  report: {
+    generate: false,
+    folder: '.',
+    filePath: 'TestReport_${datetime}.html',
+    resultsFile: null,
+  },
+};
 
 ReplUtil.DirName = vi.fn(_ => 'mockDir');
 const templateString = 'template string';
@@ -35,7 +35,7 @@ vi.mock('ejs', async importOriginal => {
         return vi.fn();
       });
     }),
-  }
+  };
 });
 
 // Create some sample test reports
@@ -55,7 +55,7 @@ const testRunReport = new TestRunReport(testReports);
 
 // Set up the container with the mock repl app args
 beforeAll(() => {
-  Container.set('REPL-APP-ARGS', new MockReplAppArgs());
+  Container.set('REPL-CONFIG', MockReplAppArgs);
 });
 
 test('getResults called when report-generate is false', () => {
@@ -68,12 +68,11 @@ test('getResults called when report-generate is false', () => {
 // Test the getResult method with report generation enabled
 test('getResult generates a report file when enabled', () => {
   // Get the mock repl app args from the container
-  const replAppArgs = Container.get<MockReplAppArgs>('REPL-APP-ARGS');
+  const replAppArgs = Container.get<typeof MockReplAppArgs>('REPL-CONFIG');
 
   // Enable the report generation and set the file path
-  replAppArgs.parsedArgs.values['report-generate'] = true;
-  replAppArgs.parsedArgs.values['report-filePath'] =
-    'TestReport_${datetime}.html';
+  replAppArgs.report.generate = true;
+  replAppArgs.report.filePath = 'TestReport_${datetime}.html';
 
   // Call the getResult method
   const result = testRunReport.getResult();
