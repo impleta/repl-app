@@ -22,9 +22,9 @@
     "fixDts": "npx replace-in-file --configFile=replace-config-dts.cjs --quiet",
     "copyAssets": "npx copyfiles -f \"src/reporting/*.ejs\" \"build/src\" && npx copyfiles -f \"src/config/*.json\" \"build/src/config\"",
     "fix": "gts fix",
-    "prepare": "npm.cmd run compile",
-    "pretest1": "npm.cmd run compile",
-    "posttest": "npm.cmd run lint"
+    "prepare": "npm run compile",
+    "pretest1": "npm run compile",
+    "posttest": "npm run lint"
   },
   "author": "impleta",
   "license": "ISC",
