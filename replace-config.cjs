@@ -2,6 +2,6 @@ module.exports = {
   files: [
     './build/**/*.js'
   ],
-  "from": /import (.*) from ['"](\.(.*?))(?:\.js)?['"];/g,
-  "to": "import $1 from '$2.js';"
+  "from": /(import|export) (.*) from ['"](\.(.*?))(?:\.js)?['"];/g,
+  "to": "$1 $2 from '$3.js';"
 };
