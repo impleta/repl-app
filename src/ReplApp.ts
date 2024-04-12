@@ -11,6 +11,8 @@ import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
 import {ReplConfig} from './config/ReplConfig';
 
+export {ReplUtil} from './ReplUtil';
+
 interface LooseObject {
   [key: string]: unknown;
 }
