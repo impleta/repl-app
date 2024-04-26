@@ -86,7 +86,7 @@ export class ReplConfig {
       argsConfig = ReplConfig.setConfigValue(argsConfig, key, replAppArgs[key]);
     }
 
-    ReplConfig._config = ReplConfig.merge(config, argsConfig) as ReplConfigType;
+    ReplConfig._config = ReplUtil.merge(config, argsConfig) as ReplConfigType;
 
     Container.set('REPL-CONFIG', ReplConfig._config);
     return ReplConfig._config;
@@ -154,23 +154,4 @@ export class ReplConfig {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static merge(current: any, updates: any) {
-    if (!updates) {
-      return;
-    }
-
-    for (const key of Object.keys(updates)) {
-      if (
-        !Object.prototype.hasOwnProperty.call(current, key) ||
-        typeof updates[key] !== 'object'
-      ) {
-        current[key] = updates[key];
-      } else {
-        ReplConfig.merge(current[key], updates[key]);
-      }
-    }
-
-    return current;
-  }
 }

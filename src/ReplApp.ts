@@ -10,6 +10,7 @@ import {ParseArgsConfig} from 'util';
 import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
 import {ReplConfig} from './config/ReplConfig';
+import { ReplUtil } from './ReplUtil';
 
 export {ReplUtil} from './ReplUtil';
 
@@ -52,10 +53,10 @@ export class ReplApp {
     argsConfig?: ParseArgsConfig,
     optionsDescription?: {[option: string]: string}
   ) {
-    argsConfig = {
-      ...argsConfig,
-      ...ReplApp.replArgsConfig,
-    };
+    argsConfig = ReplUtil.merge(
+      argsConfig,
+      ReplApp.replArgsConfig,
+    );
 
     const cmdLineArgs = CommandLineArgsParser.getArgs(argsConfig);
 

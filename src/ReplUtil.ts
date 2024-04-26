@@ -28,4 +28,24 @@ export class ReplUtil {
     return Path.join(__dirname, p);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static merge(current: any, updates: any) {
+    if (!updates) {
+      return;
+    }
+
+    for (const key of Object.keys(updates)) {
+      if (
+        !Object.prototype.hasOwnProperty.call(current, key) ||
+        typeof updates[key] !== 'object'
+      ) {
+        current[key] = updates[key];
+      } else {
+        ReplUtil.merge(current[key], updates[key]);
+      }
+    }
+
+    return current;
+  }
+
 }
