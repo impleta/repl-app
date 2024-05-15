@@ -26,7 +26,7 @@ export class Test {
 
     await bar.link(linker);
 
-    console.log(`Running test ${this.filePath}`);
+    console.log(`Running ${this.filePath}`);
     await bar.evaluate();
 
     return this.testReport;
