@@ -56,7 +56,9 @@ export class CommandLineArgsParser {
       parsedArgs: parsedArgs,
     };
 
-    return CommandLineArgsParser.parsedArgs;
+    CommandLineArgs = CommandLineArgsParser.parsedArgs;
+
+    return CommandLineArgs;
   }
 
   static extractScriptArgs(parsedArgs: ParsedArgs) {

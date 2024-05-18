@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import glob from 'glob';
 import Path from 'path';
 import {pathToFileURL} from 'url';
-import {CommandLineArgsParser, ReplAppArgs} from './CommandLineArgsParser';
+import {CommandLineArgs, CommandLineArgsParser, ReplAppArgs} from './CommandLineArgsParser';
 import {ParseArgsConfig} from 'util';
 import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
@@ -208,5 +208,4 @@ export class ReplApp {
     return files.flat();
   }
 }
-
-export {ReplAppArgs, CommandLineArgsParser, assert, ReplAssert};
+export {ReplAppArgs, CommandLineArgsParser, CommandLineArgs, assert, ReplAssert};
