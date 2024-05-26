@@ -16,8 +16,8 @@ class ReplAssert {
     report?: TestReport
   ) {
     const lineNumber = ReplAssert.getLineNumber(e);
-    // const msg = `Failed!: ${assertion}: line ${lineNumber}`;
-    // console.log(chalk.red(`msg: ${msg}`));
+    const msg = `Failed!: ${assertion}: line ${lineNumber}`;
+    console.log(chalk.red(`msg: ${msg}`));
     // console.log(chalk.red(`e: ${JSON.stringify(e)}`));
 
     if (report) {
@@ -86,7 +86,7 @@ class ReplAssert {
    */
   static getArguments(argumentsList: unknown[]): string {
     return argumentsList
-      .map(a => (typeof a === 'string' ? `'${a}'` : a))
+      .map(a => (typeof a === 'string' ? `'${a}'` : JSON.stringify(a)))
       .join(', ');
   }
 

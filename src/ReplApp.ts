@@ -5,12 +5,17 @@ import chalk from 'chalk';
 import glob from 'glob';
 import Path from 'path';
 import {pathToFileURL} from 'url';
-import {CommandLineArgs, CommandLineArgsParser, ReplAppArgs} from './CommandLineArgsParser';
+import {
+  CommandLineArgs,
+  CommandLineArgsParser,
+  ReplAppArgs,
+} from './CommandLineArgsParser';
+
 import {ParseArgsConfig} from 'util';
 import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
 import {ReplConfig} from './config/ReplConfig';
-import { ReplUtil } from './ReplUtil';
+import {ReplUtil} from './ReplUtil';
 
 export {ReplUtil} from './ReplUtil';
 
@@ -53,10 +58,7 @@ export class ReplApp {
     argsConfig?: ParseArgsConfig,
     optionsDescription?: {[option: string]: string}
   ) {
-    argsConfig = ReplUtil.merge(
-      argsConfig,
-      ReplApp.replArgsConfig,
-    );
+    argsConfig = ReplUtil.merge(argsConfig, ReplApp.replArgsConfig);
 
     const cmdLineArgs = CommandLineArgsParser.getArgs(argsConfig);
 
@@ -208,4 +210,11 @@ export class ReplApp {
     return files.flat();
   }
 }
-export {ReplAppArgs, CommandLineArgsParser, CommandLineArgs, assert, ReplAssert};
+
+export {
+  ReplAppArgs,
+  CommandLineArgsParser,
+  CommandLineArgs,
+  assert,
+  ReplAssert,
+};
