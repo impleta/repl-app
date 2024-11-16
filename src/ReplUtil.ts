@@ -14,8 +14,7 @@ export class ReplUtil {
 
   static getJSONFileContentsAsObject<ContentType>(jsonFileName: string) {
     // TODO: For now, cannot use dynamic imports with JSON files without the experimental switch,
-    // TODO: so simply read the file and deserialize. Can later merge with the getInitFileContents
-    // TODO: code above once the switch is no longer needed
+    // TODO: so simply read the file and deserialize.
     const path = ReplUtil.getAbsolutePath(jsonFileName);
     return JSON.parse(fs.readFileSync(path, 'utf-8')) as ContentType;
   }
@@ -27,6 +26,26 @@ export class ReplUtil {
 
     const __dirname = process.cwd();
     return Path.join(__dirname, p);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static merge(current: any, updates: any) {
+    if (!updates) {
+      return;
+    }
+
+    for (const key of Object.keys(updates)) {
+      if (
+        !Object.prototype.hasOwnProperty.call(current, key) ||
+        typeof updates[key] !== 'object'
+      ) {
+        current[key] = updates[key];
+      } else {
+        ReplUtil.merge(current[key], updates[key]);
+      }
+    }
+
+    return current;
   }
 
 }

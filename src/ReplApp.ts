@@ -5,12 +5,19 @@ import chalk from 'chalk';
 import glob from 'glob';
 import Path from 'path';
 import {pathToFileURL} from 'url';
-import {CommandLineArgsParser, ReplAppArgs} from './CommandLineArgsParser';
+import {
+  CommandLineArgs,
+  CommandLineArgsParser,
+  ReplAppArgs,
+} from './CommandLineArgsParser';
+
 import {ParseArgsConfig} from 'util';
 import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
-import {Container} from 'typedi';
-import {ReplConfig} from './ReplConfig';
+import {ReplConfig} from './config/ReplConfig';
+import {ReplUtil} from './ReplUtil';
+
+export {ReplUtil} from './ReplUtil';
 
 interface LooseObject {
   [key: string]: unknown;
@@ -26,13 +33,19 @@ export class ReplApp {
       configFile: {
         type: 'string',
       },
-      'report-generate': {
+      'report.generate': {
         type: 'boolean',
       },
-      'report-folder': {
+      'report.folder': {
         type: 'string',
       },
-      'report-filePath': {
+      'report.filePath': {
+        type: 'string',
+      },
+      'get-config': {
+        type: 'string',
+      },
+      'set-config': {
         type: 'string',
       },
     },
@@ -45,22 +58,15 @@ export class ReplApp {
     argsConfig?: ParseArgsConfig,
     optionsDescription?: {[option: string]: string}
   ) {
+    argsConfig = ReplUtil.merge(argsConfig, ReplApp.replArgsConfig);
 
-    const reportFilePath = ReplConfig.getReportFilePath();
-
-    // console.log(`Config file says save to ${reportFilePath}`);
-    argsConfig = {
-      ...argsConfig,
-      ...ReplApp.replArgsConfig,
-    };
- 
     const cmdLineArgs = CommandLineArgsParser.getArgs(argsConfig);
 
-    const config = ReplConfig.getConfig();
-    cmdLineArgs.parsedArgs.values = {
-      ...config,
-      ...cmdLineArgs.parsedArgs.values,
-    };
+    if (ReplConfig.handleConfigOperation(cmdLineArgs.parsedArgs.values)) {
+      return;
+    }
+
+    const config = ReplConfig.getConfig(cmdLineArgs.parsedArgs.values);
 
     if (config.initFiles) {
       initFilePaths.push(...(config.initFiles as []));
@@ -79,8 +85,6 @@ export class ReplApp {
     const initFileContents = Object.assign({}, ...contents);
 
     const replContext = ReplApp.getContext();
-
-    Container.set('REPL-APP-ARGS', cmdLineArgs);
 
     if (cmdLineArgs.scriptPaths.length === 0) {
       return ReplApp.startRepl(replContext, initFileContents);
@@ -207,4 +211,10 @@ export class ReplApp {
   }
 }
 
-export {ReplAppArgs, CommandLineArgsParser, assert, ReplAssert};
+export {
+  ReplAppArgs,
+  CommandLineArgsParser,
+  CommandLineArgs,
+  assert,
+  ReplAssert,
+};

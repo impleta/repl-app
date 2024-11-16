@@ -10,6 +10,7 @@ type ReturnType<T extends (...args: never[]) => never> = T extends (
   ? R
   : never;
 export type ParsedArgs = ReturnType<typeof parseArgs>;
+export type ParsedArgsValues = ParsedArgs['values'];
 
 export type ReplAppArgs = {
   initFilePaths: string[];
@@ -55,7 +56,9 @@ export class CommandLineArgsParser {
       parsedArgs: parsedArgs,
     };
 
-    return CommandLineArgsParser.parsedArgs;
+    CommandLineArgs = CommandLineArgsParser.parsedArgs;
+
+    return CommandLineArgs;
   }
 
   static extractScriptArgs(parsedArgs: ParsedArgs) {
