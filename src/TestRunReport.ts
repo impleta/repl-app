@@ -1,4 +1,4 @@
-import * as * as ejs from 'ejs';
+import * as ejs from 'ejs';
 import * as fs from 'fs';
 import Path from 'path';
 
