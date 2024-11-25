@@ -17,7 +17,7 @@ export class TestRunner {
   // static AssertionSuccessHandler = ()
   constructor(files: string[], context: {[key: string]: unknown}) {
     this.files = files;
-    this.context = vm.createContext({console, ...context});
+    this.context = context;
 
     this.linker = async (specifier: string, referencingModule: vm.Module) => {
       // This is just boiler-plate, and will never get called unless there's
@@ -39,7 +39,8 @@ export class TestRunner {
   async run() {
     const promises = this.files.map(async (f: string) => {
       const test = new Test(f);
-      return await test.run(this.context, this.linker);
+      const context = vm.createContext({console, ...this.context});
+      return await test.run(context, this.linker);
     });
 
     const results = await Promise.all(promises);
