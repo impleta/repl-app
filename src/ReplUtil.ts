@@ -30,6 +30,11 @@ export class ReplUtil {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static merge(current: any, updates: any) {
+    if (!current) {
+      console.log('Warning! Cannot merge with null object.');
+      return;
+    }
+
     if (!updates) {
       return;
     }

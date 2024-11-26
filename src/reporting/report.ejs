@@ -81,35 +81,22 @@
       font-size: 0.9em;
       color: #333;
       position: relative;
+      display: flex;
+      align-items: center;
     }
 
-    .code-line:before {
-      content: counter(line);
-      display: inline-block;
+    .code-line .line-number {
       margin-right: 10px;
       color: #888;
       font-weight: bold;
       width: 2em;
       text-align: right;
-    }
-
-    .copy-link {
-      position: absolute;
-      right: -25px;
-      /* Aligns the icon next to the line */
-      color: #007bff;
-      font-size: 0.8em;
-      text-decoration: none;
       cursor: pointer;
-      visibility: hidden;
+      flex-shrink: 0;
     }
 
-    .code-line:hover .copy-link {
-      visibility: visible;
-    }
-
-    .copy-link:hover {
-      color: #0056b3;
+    .code-line .line-number:hover {
+      text-decoration: underline;
     }
 
     .failed-message {
@@ -188,18 +175,6 @@
   <title>
     <%= runResult.title %>
   </title>
-
-  <script>
-    function copyToClipboard(lineId) {
-        const url = `${window.location.origin}${window.location.pathname}#${lineId}`;
-        navigator.clipboard.writeText(url).then(() => {
-            alert("Link copied to clipboard!");
-        }).catch(err => {
-            alert("Failed to copy link: " + err);
-        });
-    }
-</script>
-
 </head>
 
 <body>
@@ -232,7 +207,7 @@
           <%= runResult.date %>
         </span>
       </div>
-      <% testReports.forEach((report)=> { -%>
+      <% testReports.forEach((report, reportIndex)=> { -%>
         <div class="test-report">
           <div class="test-title-wrapper">
             <span class="test-title">
@@ -251,8 +226,15 @@
           </span> -->
           <div class="test-output">
             <div class="left-column">
-              <% report.lines.forEach((line)=> { -%><div class="code-line"><%- line %></div>
-                <% }); -%>
+              <% const reportIndexStr=String(reportIndex).padStart(4, '0' ) %>
+                <% report.lines.forEach((line, lineIndex)=> { -%>
+                  <% const lineIndexStr=String(lineIndex).padStart(4, '0' ) %>
+                    <% const lineId=`${reportIndexStr}-${lineIndexStr}` %>
+                      <div class="code-line" id="<%-lineId%>">
+                        <span class="line-number" data-line-id="<%-lineId%>"><%-lineIndexStr.replace(/^0+(?=\d)/, ' ')%></span>
+                        <%- line %>
+                      </div>
+                      <% }); -%>
             </div>
             <div class="right-column">
               <% report.assertionResults.forEach((result)=> { -%>
@@ -263,3 +245,19 @@
         </div>
         <% }); -%>
     </div>
+    <script>
+      document.addEventListener('click', function (event) {
+        // Check if the clicked element is a line number
+        if (event.target && event.target.classList.contains('line-number')) {
+          const lineId = event.target.dataset.lineId;
+          if (lineId) {
+            const baseUrl = window.location.href.split('#')[0];
+            const lineUrl = `${baseUrl}#${lineId}`;
+            navigator.clipboard.writeText(lineUrl);
+          }
+        }
+      });
+    </script>
+</body>
+
+</html>
