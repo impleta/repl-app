@@ -9,6 +9,8 @@ export type AssertionResult = {
 };
 
 export class TestReport {
+  title = '';
+  description = '';
   filePath: string;
   private _testContent = '';
   assertionResults: AssertionResult[] = [];

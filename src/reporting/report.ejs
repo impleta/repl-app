@@ -1,121 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-          margin: 0;
-          padding: 0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      color: #333;
+      line-height: 1.6;
+    }
 
-        .test-runner-output {
-          border: 1px solid #d1d5da;
-          border-radius: 6px;
-          overflow: hidden;
-          margin: 10px;
-          padding: 10px;
-          background-color: #f7f7f7;
-        }
+    .test-runner-output {
+      width: 100%;
+      margin: 0 auto;
+      padding: 5px;
+      background-color: #ffffff;
+      border-top: 4px solid #007bff;
+      border-radius: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
-        .test-output {
-          background-color: #fff;
-          display: flex;
-          font-family: 'Roboto Mono', monospace;
-          margin: 0;
-          padding: 10px;
-          border-radius: 4px;
-          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)
-        }
+    .test-run-info {
+      margin-bottom: 5px;
+      padding: 10px;
+      background-color: #e9ecef;
+      border-radius: 6px;
+      font-size: 1.1em;
+      color: #555;
+    }
 
-        .left-column,
-        .right-column {
-          overflow-x: auto;
-          margin: 0;
-          padding: 10px;
-          text-align: left;
-        }
-        /*
-        .left-column {
-          background: #2c3e50;
-          color: #ecf0f1;
-        }
-        */
-        .code-line {
-          counter-increment: line;
-          margin-bottom: 10px;
-        }
+    .test-report {
+      margin-bottom: 15px;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
+    }
 
-        .code-line:before {
-          content: counter(line);
-          display: inline-block;
-          padding-right: 10px;
-          color: #3498db;
-          font-weight: bold;
-          width: 1.5em; /* this should be variable based on number of lines. 0.5 for each digit */
-        }
+    .test-report:hover {
+      background-color: #f9f9f9;
+    }
 
-        .right-column {
-            padding-left: 20px;
-        }
+    .test-output {
+      display: flex;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      width: 100%;
+    }
 
-        .test-run-info {
-          margin-bottom: 10px;
-          color: #777;
-        }
+    .test-result {
+      margin-left: 5px;
+    }
 
-        .test-output div {
-          margin-bottom: 5px;
-        }
+    .left-column,
+    .right-column {
+      flex: 1;
+      padding: 10px;
+      overflow-x: auto;
+    }
 
-        .failed-message {
-          color: #e74c3c;
-        }
+    .left-column {
+      background: #f4f6f8;
+      border-right: 1px solid #ddd;
+    }
 
-        .succeeded-message {
-          color: #2ecc71;
-        }
-    </style>
-    <title><%= runResult.title %></title>
+    .right-column {
+      background: #ffffff;
+      padding-left: 15px;
+    }
+
+    .code-line {
+      counter-increment: line;
+      margin-bottom: 5px;
+      font-size: 0.9em;
+      color: #333;
+    }
+
+    .code-line:before {
+      content: counter(line);
+      display: inline-block;
+      margin-right: 10px;
+      color: #888;
+      font-weight: bold;
+      width: 2em;
+      text-align: right;
+    }
+
+    .failed-message {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .succeeded-message {
+      color: #2ecc71;
+      font-weight: bold;
+    }
+
+    .test-title {
+      display: block;
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #1d3557;
+      margin-left: 5px;
+    }
+
+    .test-description {
+      display: block;
+      font-size: 1.1em;
+      color: #495057;
+      margin-left: 5px;
+    }
+
+    .test-file-path {
+      display: block;
+      font-size: 0.85em;
+      color: #6c757d;
+      margin-left: 5px;
+      font-style: italic;
+    }
+
+    .success {
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+    }
+
+    .failure {
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+    }
+
+    .test-title-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .test-title {
+        font-size: 1.4em;
+        font-weight: bold;
+        color: #1d3557;
+    }
+
+    .test-result {
+        font-size: 1.1em;
+        font-weight: bold;
+        text-align: right;
+        margin-right: 50px;
+    }
+
+    .test-result.succeeded {
+        color: #4CAF50; /* Green for success */
+    }
+
+    .test-result.failed {
+        color: #e74c3c; /* Red for failure */
+    }
+  </style>
+
+  <title>
+    <%= runResult.title %>
+  </title>
 </head>
-<body>
-<%
-function getAssertionResultText(assertionResult) {
-  if(assertionResult.success) {
-    return "<div>&#x200b;</div>"
-  }
-  return `<div class="failed-message">Failed! ${assertionResult.msg}</div>`;
-}
-const codeLines = [];
-const assertionLines = [];
 
-function buildCodeAndAssertions(report) {
-  report.lines.forEach((line, index) => {
+<body>
+  <% function getAssertionResultText(assertionResult) { if(assertionResult.success) { return "<div>&#x200b;</div>" }
+    return `<div class="failed-message">Failed! ${assertionResult.msg}</div>`;
+    }
+    const codeLines = [];
+    const assertionLines = [];
+
+    function buildCodeAndAssertions(report) {
+    report.lines.forEach((line, index) => {
     const success = report.assertionResults[index].success;
+
+    })
+    }
     
-  })
-}
-%>
-<div class="test-runner-output">
-  <div class="test-run-info">
-    <span><%= `${runResult.successfulTestsCount} of ${runResult.totalTests} tests Succeeded`%> </span>
-    <span><%= runResult.date %> </span>
-  </div>
-  <% testReports.forEach((report) => { -%>
-    <div>
-      <span><%= report.filePath %></span>
-      <span><%= report.success ? "Succeeded" : "Failed" %></span>
-      <div class="test-output">
-        <div class="left-column">
-        <% report.lines.forEach((line) => { -%><div class="code-line"><%- line %></div>
-        <% }); -%>
-        </div>
-        <div class="right-column">
-          <% report.assertionResults.forEach((result) => { -%>
-            <%- getAssertionResultText(result) -%>
-    <% }); -%>
-        </div>
+    function getTestResult(succeeded) {
+      if (succeeded) {
+        return '<span class="test-result succeeded">Succeeded</span>';
+      }
+      return '<span class="test-result failed">FAILED</span>';
+    }
+    %>
+    <div class="test-runner-output">
+      <div class="test-run-info">
+        <span>
+          <%= `${runResult.successfulTestsCount} of ${runResult.totalTests} tests Succeeded`%>
+        </span>
+        <span>
+          <%= runResult.date %>
+        </span>
       </div>
+      <% testReports.forEach((report)=> { -%>
+        <div class="test-report">
+          <div class="test-title-wrapper">
+            <span class="test-title">
+              <%= report.title %>
+            </span>
+            <%-  getTestResult(report.success) %>
+          </div>
+          <span class="test-description">
+            <%= report.description %>
+          </span>
+          <span class="test-file-path">
+            <%= report.filePath %>
+          </span>
+          <!-- <span class="test-result">
+            <%= report.success ? "Succeeded" : "Failed" %>
+          </span> -->
+          <div class="test-output">
+            <div class="left-column">
+              <% report.lines.forEach((line)=> { -%><div class="code-line"><%- line %></div>
+                <% }); -%>
+            </div>
+            <div class="right-column">
+              <% report.assertionResults.forEach((result)=> { -%>
+                <%- getAssertionResultText(result) -%>
+                  <% }); -%>
+            </div>
+          </div>
+        </div>
+        <% }); -%>
     </div>
-  <% }); -%>
-</div>

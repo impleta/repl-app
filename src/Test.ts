@@ -15,23 +15,26 @@ export class Test {
     // so that we can get a callback when an assertion fails
     // TODO: pass in a TestReport instance, not the whole test here.
     context.assert = ReplAssert.getInstance(this.testReport);
+    context.setTitle = (title: string) => (this.testReport.title = title);
+    context.setDescription = (description: string) =>
+      (this.testReport.description = description);
 
     // IMPORTANT: do not modify fileContents before passing to
     // SourceTextModule, as that will affect identifying the correct lines
     // in test run reports.
-    const bar = new vm.SourceTextModule(fileContents, {
+    const scriptModule = new vm.SourceTextModule(fileContents, {
       context: context,
       identifier: 'repl-app-script',
     });
 
-    await bar.link(linker);
+    await scriptModule.link(linker);
 
     console.log(`Running ${this.filePath}`);
-    await bar.evaluate();
+    await scriptModule.evaluate();
 
     return this.testReport;
   }
-
+ 
   constructor(filePath: string) {
     this.filePath = filePath;
     this.testReport = new TestReport(filePath);
