@@ -75,6 +75,8 @@
       padding-left: 15px;
     }
 
+    code { white-space: pre; }
+
     .code-line {
       counter-increment: line;
       margin-bottom: 5px;
@@ -94,6 +96,7 @@
       cursor: pointer;
       flex-shrink: 0;
       position: relative;
+      user-select: none;
     }
 
     .code-line .line-number:hover {
@@ -251,14 +254,14 @@
           </span> -->
           <div class="test-output">
             <div class="left-column">
-              <% const reportIndexStr=String(reportIndex).padStart(4, '0' ) %>
+              <% const reportIndexStr=String(reportIndex + 1).padStart(4, '0' ) %>
                 <% report.lines.forEach((line, lineIndex)=> { -%>
-                  <% const lineIndexStr=String(lineIndex).padStart(4, '0' ) %>
+                  <% const lineIndexStr=String(lineIndex + 1).padStart(4, '0' ) %>
                     <% const lineId=`${reportIndexStr}-${lineIndexStr}` %>
                       <div class="code-line" id="<%-lineId%>">
                         <span class="line-number" data-line-id="<%-lineId%>"><%-lineIndexStr.replace( /^0+(?=\d)/, ' '
                             )%></span>
-                        <%- line %>
+                        <code><span style="font-size: 15px"><%-line%></span></code>
                       </div>
                       <% }); -%>
             </div>

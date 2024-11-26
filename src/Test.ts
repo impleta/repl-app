@@ -30,8 +30,10 @@ export class Test {
     await scriptModule.link(linker);
 
     console.log(`Running ${this.filePath}`);
+    const startTime = Date.now();
     await scriptModule.evaluate();
-
+    const endTime = Date.now();
+    this.testReport.runTime = endTime - startTime;
     return this.testReport;
   }
  
