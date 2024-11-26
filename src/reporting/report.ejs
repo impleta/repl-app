@@ -80,6 +80,7 @@
       margin-bottom: 5px;
       font-size: 0.9em;
       color: #333;
+      position: relative;
     }
 
     .code-line:before {
@@ -90,6 +91,25 @@
       font-weight: bold;
       width: 2em;
       text-align: right;
+    }
+
+    .copy-link {
+      position: absolute;
+      right: -25px;
+      /* Aligns the icon next to the line */
+      color: #007bff;
+      font-size: 0.8em;
+      text-decoration: none;
+      cursor: pointer;
+      visibility: hidden;
+    }
+
+    .code-line:hover .copy-link {
+      visibility: visible;
+    }
+
+    .copy-link:hover {
+      color: #0056b3;
     }
 
     .failed-message {
@@ -136,36 +156,50 @@
     }
 
     .test-title-wrapper {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .test-title {
-        font-size: 1.4em;
-        font-weight: bold;
-        color: #1d3557;
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #1d3557;
     }
 
     .test-result {
-        font-size: 1.1em;
-        font-weight: bold;
-        text-align: right;
-        margin-right: 50px;
+      font-size: 1.1em;
+      font-weight: bold;
+      text-align: right;
+      margin-right: 50px;
     }
 
     .test-result.succeeded {
-        color: #4CAF50; /* Green for success */
+      color: #4CAF50;
+      /* Green for success */
     }
 
     .test-result.failed {
-        color: #e74c3c; /* Red for failure */
+      color: #e74c3c;
+      /* Red for failure */
     }
   </style>
 
   <title>
     <%= runResult.title %>
   </title>
+
+  <script>
+    function copyToClipboard(lineId) {
+        const url = `${window.location.origin}${window.location.pathname}#${lineId}`;
+        navigator.clipboard.writeText(url).then(() => {
+            alert("Link copied to clipboard!");
+        }).catch(err => {
+            alert("Failed to copy link: " + err);
+        });
+    }
+</script>
+
 </head>
 
 <body>
@@ -181,12 +215,12 @@
 
     })
     }
-    
+
     function getTestResult(succeeded) {
-      if (succeeded) {
-        return '<span class="test-result succeeded">Succeeded</span>';
-      }
-      return '<span class="test-result failed">FAILED</span>';
+    if (succeeded) {
+    return '<span class="test-result succeeded">Succeeded</span>';
+    }
+    return '<span class="test-result failed">FAILED</span>';
     }
     %>
     <div class="test-runner-output">
@@ -204,7 +238,7 @@
             <span class="test-title">
               <%= report.title %>
             </span>
-            <%-  getTestResult(report.success) %>
+            <%- getTestResult(report.success) %>
           </div>
           <span class="test-description">
             <%= report.description %>
