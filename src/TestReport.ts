@@ -1,3 +1,4 @@
+import ms from 'ms';
 import {EOL} from 'os';
 
 export type AssertionResult = {
@@ -16,6 +17,7 @@ export class TestReport {
   assertionResults: AssertionResult[] = [];
   success = true;
   lines: string[] = [];
+  runTime = 0;
 
   get testContent(): string {
     return this._testContent;
@@ -30,6 +32,10 @@ export class TestReport {
       assertionText: '',
       success: true,
     });
+  }
+
+  get runTimeFormatted(): string {
+    return ms(this.runTime);
   }
 
   constructor(filePath: string) {

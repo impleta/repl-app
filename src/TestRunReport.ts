@@ -61,7 +61,7 @@ export class TestRunReport {
           totalTests: this.testReports.length,
           successfulTestsCount: successfulTestsCount,
         },
-        testReports: this.testReports, 
+        testReports: this.testReports,
       })
     );
 
