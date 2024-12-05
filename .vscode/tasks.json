@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "watch:ejs",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: watch:ejs",
+			"detail": "nodemon --watch src/reporting/report.ejs --exec \"npm run copyAssets\""
+		}
+	]
+}

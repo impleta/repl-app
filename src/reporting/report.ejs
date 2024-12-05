@@ -19,8 +19,6 @@
       margin: 0 auto;
       padding: 5px;
       background-color: #ffffff;
-      border-top: 4px solid #007bff;
-      border-radius: 0;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
@@ -54,10 +52,6 @@
       width: 100%;
     }
 
-    .test-result {
-      margin-left: 5px;
-    }
-
     .left-column,
     .right-column {
       flex: 1;
@@ -75,6 +69,8 @@
       padding-left: 15px;
     }
 
+    code { white-space: pre-wrap; word-wrap: break-word;}
+
     .code-line {
       counter-increment: line;
       margin-bottom: 5px;
@@ -82,7 +78,7 @@
       color: #333;
       position: relative;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
     }
 
     .code-line .line-number {
@@ -94,6 +90,7 @@
       cursor: pointer;
       flex-shrink: 0;
       position: relative;
+      user-select: none;
     }
 
     .code-line .line-number:hover {
@@ -127,6 +124,8 @@
     .failed-message {
       color: #e74c3c;
       font-weight: bold;
+      font-size: 15px;
+      margin-bottom: 5px;
     }
 
     .succeeded-message {
@@ -170,20 +169,60 @@
     .test-title-wrapper {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-end;
+      margin-bottom: 10px;
     }
 
     .test-title {
       font-size: 1.4em;
-      font-weight: bold;
-      color: #1d3557;
+        font-weight: bold;
+        color: #1d3557;
+        margin-right: 10px;
+        flex: 0 1 auto;
+    }
+
+    .test-run-time {
+    font-size: 1em;
+        color: #6c757d;
+        flex: 0 1 auto;
+        margin-left: 5px;
+        position: relative; /* For tooltip positioning */
+        vertical-align: bottom;
+        align-self: flex-end;
+    }
+
+    .test-run-time:hover::after {
+        content: "Run Time";
+        position: absolute;
+        bottom: 100%; /* Position above the span */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #000;
+        color: #fff;
+        font-size: 0.8em;
+        padding: 5px 8px;
+        border-radius: 4px;
+        white-space: nowrap;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
+        z-index: 10;
+    }
+
+    .test-run-time::after {
+        opacity: 0;
+        visibility: hidden;
     }
 
     .test-result {
-      font-size: 1.1em;
-      font-weight: bold;
-      text-align: right;
-      margin-right: 50px;
+        font-size: 1.1em;
+        font-weight: bold;
+        text-align: right;
+        color: #007bff;
+        margin-left: auto;
+        margin-right: 10px;
+        padding-right: 10px;
+        flex: 0 0 auto;
     }
 
     .test-result.succeeded {
@@ -203,7 +242,7 @@
 </head>
 
 <body>
-  <% function getAssertionResultText(assertionResult) { if(assertionResult.success) { return "<div>&#x200b;</div>" }
+  <% function getAssertionResultText(assertionResult) { if(assertionResult.success) { return "<div class='code-line'>&#x200b;</div>" }
     return `<div class="failed-message">Failed! ${assertionResult.msg}</div>`;
     }
     const codeLines = [];
@@ -238,6 +277,9 @@
             <span class="test-title">
               <%= report.title %>
             </span>
+            <span class="test-run-time">
+              <%= report.runTimeFormatted %>
+            </span>
             <%- getTestResult(report.success) %>
           </div>
           <span class="test-description">
@@ -251,14 +293,14 @@
           </span> -->
           <div class="test-output">
             <div class="left-column">
-              <% const reportIndexStr=String(reportIndex).padStart(4, '0' ) %>
+              <% const reportIndexStr=String(reportIndex + 1).padStart(4, '0' ) %>
                 <% report.lines.forEach((line, lineIndex)=> { -%>
-                  <% const lineIndexStr=String(lineIndex).padStart(4, '0' ) %>
+                  <% const lineIndexStr=String(lineIndex + 1).padStart(4, '0' ) %>
                     <% const lineId=`${reportIndexStr}-${lineIndexStr}` %>
                       <div class="code-line" id="<%-lineId%>">
                         <span class="line-number" data-line-id="<%-lineId%>"><%-lineIndexStr.replace( /^0+(?=\d)/, ' '
                             )%></span>
-                        <%- line %>
+                        <code><span style="font-size: 15px"><%-line%></span></code>
                       </div>
                       <% }); -%>
             </div>
