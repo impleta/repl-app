@@ -16,6 +16,7 @@ import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
 import {ReplConfig} from './config/ReplConfig';
 import {ReplUtil} from './ReplUtil';
+import { ScriptPaths } from './Test';
 
 export {ReplUtil} from './ReplUtil';
 
@@ -112,6 +113,7 @@ export class ReplApp {
     initFileContents: LooseObject,
     args: ReplAppArgs
   ) {
+    console.log(args);
     const files = ReplApp.getFiles(args.scriptPaths);
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
@@ -174,19 +176,18 @@ export class ReplApp {
 
   /**
    * Returns a flat array of all descendant files of the specified paths.
-   * TODO: Look for specific extensions like '.js' and '.ts' only.
    * @param paths one or more file or folder paths
    * @returns a flat array of all files found
    */
-  static getFiles(paths: string[]) {
-    const __dirname = process.cwd();
+  static getFiles(paths: string[]): ScriptPaths[] {
+    const dirname = process.cwd();
 
-    const files = paths.map(a => {
-      const absoluteFilePath = Path.join(__dirname, a);
+    const files: ScriptPaths[] = paths.map(a => {
+      let absoluteFilePath = Path.join(dirname, a);
       if (fs.existsSync(absoluteFilePath)) {
         const stats = fs.lstatSync(absoluteFilePath);
         if (stats.isFile()) {
-          return absoluteFilePath;
+          return [{fullPath: absoluteFilePath, shortPath: ''}];
         }
 
         if (stats.isDirectory()) {
@@ -196,16 +197,25 @@ export class ReplApp {
 
           if (Path.sep !== '/') {
             globPattern = globPattern.replace(/\\/g, '/');
+            absoluteFilePath = absoluteFilePath.replace(/\\/g, '/');
           }
 
-          return glob.sync(globPattern);
+          return glob.sync(globPattern).map(f => {
+            return {
+              fullPath: f,
+              shortPath: Path.join(
+                Path.basename(absoluteFilePath),
+                f.replace(absoluteFilePath, '')
+              ),
+            };
+          });
         }
       }
 
       // TODO: How do we inform the user when the file does not exist?
-      console.log(`did not find file or folder ${absoluteFilePath}`);
-      return null;
-    }) as string[];
+      console.log(`Did not find file or folder ${absoluteFilePath}`);
+      return {fullPath: ''};
+    }) as ScriptPaths[];
 
     return files.flat();
   }

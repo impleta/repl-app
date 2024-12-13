@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import {ReplAssert} from './ReplAssert';
 import {TestReport} from './TestReport';
 
+export type ScriptPaths = {fullPath: string, shortPath: string};
+
 export class Test {
   filePath: string;
   testReport: TestReport;
@@ -36,9 +38,9 @@ export class Test {
     this.testReport.runTime = endTime - startTime;
     return this.testReport;
   }
- 
-  constructor(filePath: string) {
-    this.filePath = filePath;
-    this.testReport = new TestReport(filePath);
+
+  constructor(scriptPaths: ScriptPaths) {
+    this.filePath = scriptPaths.fullPath;
+    this.testReport = new TestReport(scriptPaths.shortPath);
   }
 }

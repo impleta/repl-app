@@ -1,5 +1,5 @@
 import * as vm from 'vm';
-import {Test} from './Test';
+import {ScriptPaths, Test} from './Test';
 import {TestRunReport} from './TestRunReport';
 
 /**
@@ -9,13 +9,13 @@ import {TestRunReport} from './TestRunReport';
  *
  */
 export class TestRunner {
-  files: string[];
+  files: ScriptPaths[];
   context: vm.Context;
   linker: vm.ModuleLinker;
   result: boolean[] = [];
 
   // static AssertionSuccessHandler = ()
-  constructor(files: string[], context: {[key: string]: unknown}) {
+  constructor(files: ScriptPaths[], context: {[key: string]: unknown}) {
     this.files = files;
     this.context = context;
 
@@ -37,7 +37,7 @@ export class TestRunner {
   }
 
   async run() {
-    const promises = this.files.map(async (f: string) => {
+    const promises = this.files.map(async (f: ScriptPaths) => {
       const test = new Test(f);
       const context = vm.createContext({console, ...this.context});
       return await test.run(context, this.linker);
