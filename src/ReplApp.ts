@@ -201,7 +201,13 @@ export class ReplApp {
           }
 
           return glob.sync(globPattern).map(f => {
-            return {fullPath: f, shortPath: f.replace(absoluteFilePath, '')};
+            return {
+              fullPath: f,
+              shortPath: Path.join(
+                Path.basename(absoluteFilePath),
+                f.replace(absoluteFilePath, '')
+              ),
+            };
           });
         }
       }
