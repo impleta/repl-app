@@ -45,11 +45,29 @@
     }
 
     .test-output {
-      display: flex;
+      display: table;
       background-color: #f9f9f9;
       border: 1px solid #ddd;
       border-radius: 6px;
       width: 100%;
+      padding: 10px;
+    }
+
+    .row {
+      display: table-row;
+      font-size: 15px;
+    }
+
+    .cell {
+      display: table-cell;
+      vertical-align: top;
+      word-wrap: break-word;
+      width: 48%;
+      font-size: 15px;
+    }
+
+    .left {
+      border-right: 1px solid #ddd;
     }
 
     .left-column,
@@ -81,11 +99,11 @@
       align-items: flex-start;
     }
 
-    .code-line .line-number {
-      margin-right: 10px;
+    .line-number {
+      padding-right: 10px;
       color: #888;
       font-weight: bold;
-      width: 2em;
+      width: 30px;
       text-align: right;
       cursor: pointer;
       flex-shrink: 0;
@@ -93,11 +111,11 @@
       user-select: none;
     }
 
-    .code-line .line-number:hover {
+    .line-number:hover {
       text-decoration: underline;
     }
 
-    .code-line .line-number::after {
+    .line-number::after {
       content: "Click to copy link to this line";
       position: absolute;
       left: 100%;
@@ -116,7 +134,7 @@
       z-index: 10;
     }
 
-    .code-line .line-number:hover::after {
+    .line-number:hover::after {
       opacity: 1;
       visibility: visible;
     }
@@ -261,7 +279,14 @@
     }
     return '<span class="test-result failed">FAILED</span>';
     }
+
+    function getTestSummary() {
+      const result = runResult.successfulTestsCount === runResult.totalTests ? 'SUCCEEDED!' : 'FAILED!';
+      return ` ${result} ${runResult.successfulTestsCount} of ${runResult.totalTests} tests Succeeded.`;
+    }
     %>
+    <div class="test-run-summary" hidden><%-getTestSummary() -%> </div>
+
     <div class="test-runner-output">
       <div class="test-run-info">
         <span>
@@ -288,26 +313,18 @@
           <span class="test-file-path">
             <%= report.filePath %>
           </span>
-          <!-- <span class="test-result">
-            <%= report.success ? "Succeeded" : "Failed" %>
-          </span> -->
           <div class="test-output">
-            <div class="left-column">
+            <div class="row">
               <% const reportIndexStr=String(reportIndex + 1).padStart(4, '0' ) %>
                 <% report.lines.forEach((line, lineIndex)=> { -%>
                   <% const lineIndexStr=String(lineIndex + 1).padStart(4, '0' ) %>
                     <% const lineId=`${reportIndexStr}-${lineIndexStr}` %>
-                      <div class="code-line" id="<%-lineId%>">
-                        <span class="line-number" data-line-id="<%-lineId%>"><%-lineIndexStr.replace( /^0+(?=\d)/, ' '
-                            )%></span>
-                        <code><span style="font-size: 15px"><%-line%></span></code>
-                      </div>
-                      <% }); -%>
-            </div>
-            <div class="right-column">
-              <% report.assertionResults.forEach((result)=> { -%>
-                <%- getAssertionResultText(result) -%>
-                  <% }); -%>
+                    <div class="row" id="<%-lineId%>">
+                      <div class="cell line-number" data-line-id="<%-lineId%>"><%-lineIndex + 1-%></div>
+                      <div class="cell left"><code><%-line%></code></div>
+                      <div class="cell"><code><%-getAssertionResultText(report.assertionResults[lineIndex])%></code></div>
+                    </div>
+                    <% }); -%>
             </div>
           </div>
         </div>
@@ -315,9 +332,9 @@
     </div>
     <script>
       document.addEventListener('click', function (event) {
-        // Check if the clicked element is a line number
         if (event.target && event.target.classList.contains('line-number')) {
           const lineId = event.target.dataset.lineId;
+
           if (lineId) {
             const baseUrl = window.location.href.split('#')[0];
             const lineUrl = `${baseUrl}#${lineId}`;
