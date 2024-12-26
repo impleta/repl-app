@@ -279,7 +279,14 @@
     }
     return '<span class="test-result failed">FAILED</span>';
     }
+
+    function getTestSummary() {
+      const result = runResult.successfulTestsCount === runResult.totalTests ? 'SUCCEEDED!' : 'FAILED!';
+      return ` ${result} ${runResult.successfulTestsCount} of ${runResult.totalTests} tests Succeeded.`;
+    }
     %>
+    <div class="test-run-summary" hidden><%-getTestSummary() -%> </div>
+
     <div class="test-runner-output">
       <div class="test-run-info">
         <span>
