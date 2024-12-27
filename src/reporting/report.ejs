@@ -70,34 +70,7 @@
       background-color: #f9f9f9;
     }
 
-    .left-column,
-    .right-column {
-      flex: 1;
-      padding: 10px;
-      overflow-x: auto;
-    }
-
-    .left-column {
-      background: #f4f6f8;
-      border-right: 1px solid #ddd;
-    }
-
-    .right-column {
-      background: #ffffff;
-      padding-left: 15px;
-    }
-
     code { white-space: pre-wrap; word-wrap: break-word;}
-
-    .code-line {
-      counter-increment: line;
-      margin-bottom: 5px;
-      font-size: 0.9em;
-      color: #333;
-      position: relative;
-      display: flex;
-      align-items: flex-start;
-    }
 
     .line-number {
       padding-right: 10px;
@@ -261,7 +234,7 @@
 </head>
 
 <body>
-  <% function getAssertionResultText(assertionResult) { if(assertionResult.success) { return "<div class='code-line'>&#x200b;</div>" }
+  <% function getAssertionResultText(assertionResult) { if(assertionResult.success) { return "<div>&#x200b;</div>" }
     return `<div class="failed-message">Failed! ${assertionResult.msg}</div>`;
     }
     const codeLines = [];
