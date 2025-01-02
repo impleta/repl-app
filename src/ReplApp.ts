@@ -54,6 +54,14 @@ export class ReplApp {
 
   static imports = new Map();
 
+  /**
+   * Starts the REPL application.
+   *
+   * @param initFilePaths - An array of file paths to initialize the REPL with.
+   * @param argsConfig - Optional configuration for parsing command line arguments.
+   * @param optionsDescription - Optional description of the available options.
+   * @returns A promise that resolves to `true` if help text is shown, otherwise resolves to the result of starting the REPL or batch REPL.
+   */
   static async start(
     initFilePaths: string[] = [],
     argsConfig?: ParseArgsConfig,
@@ -113,7 +121,6 @@ export class ReplApp {
     initFileContents: LooseObject,
     args: ReplAppArgs
   ) {
-    console.log(args);
     const files = ReplApp.getFiles(args.scriptPaths);
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
@@ -141,7 +148,33 @@ export class ReplApp {
       replServer.context[k] = initFileContents[k];
     });
 
+    ReplApp.defineCustomCommands(replServer);
     return [replServer];
+  }
+
+  public static defineCustomCommands(
+    replServer: repl.REPLServer,
+    imports: Map<string, repl.REPLCommand> = new Map()
+  ) {
+    replServer.defineCommand('list-modules', {
+      help: 'List all available modules for automation',
+      action() {
+        console.log(`Available Modules: `);
+        this.displayPrompt();
+      },
+    });
+
+    replServer.defineCommand('clear', {
+      help: 'Clear the screen',
+      action() {
+        process.stdout.write('\u001B[2J\u001B[0;0f');
+        this.displayPrompt();
+      },
+    });
+
+    imports.forEach((value, key) => {
+      replServer.defineCommand(key, value);
+    });
   }
 
   static async getInitFileContents(initFileName: string): Promise<LooseObject> {
