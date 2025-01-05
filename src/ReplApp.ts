@@ -16,9 +16,7 @@ import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
 import {ReplConfig} from './config/ReplConfig';
 import {ReplUtil} from './ReplUtil';
-import { ScriptPaths } from './Test';
-
-export {ReplUtil} from './ReplUtil';
+import {ScriptPaths} from './Test';
 
 interface LooseObject {
   [key: string]: unknown;
@@ -52,7 +50,12 @@ export class ReplApp {
     },
   };
 
-  static imports = new Map();
+  /**
+   * A static map that holds help descriptions for various commands.
+   * The key is a string representing the command name, and the value is a string
+   * containing the help description for that command.
+   */
+  static helpMap = new Map<string, string>();
 
   /**
    * Starts the REPL application.
@@ -146,6 +149,8 @@ export class ReplApp {
 
     Object.keys(initFileContents).forEach(k => {
       replServer.context[k] = initFileContents[k];
+      ReplApp.helpMap.set(k, ReplUtil.getHelpText(replServer.context[k]));
+      // console.log(`${k}: `, ReplUtil.getHelpText(replServer.context[k]));
     });
 
     ReplApp.defineCustomCommands(replServer);
@@ -156,10 +161,10 @@ export class ReplApp {
     replServer: repl.REPLServer,
     imports: Map<string, repl.REPLCommand> = new Map()
   ) {
-    replServer.defineCommand('list-modules', {
-      help: 'List all available modules for automation',
+    replServer.defineCommand('lc', {
+      help: 'List all available commands for automation',
       action() {
-        console.log(`Available Modules: `);
+        console.log('Available commands: ');
         this.displayPrompt();
       },
     });
@@ -252,6 +257,27 @@ export class ReplApp {
 
     return files.flat();
   }
+
+  /**
+   * Retrieves the help map for the REPL application.
+   *
+   * @returns {Map<string, string>} A map where the keys are command names and the values are their descriptions.
+   */
+  static getHelpMap() {
+    return ReplApp.helpMap;
+  }
+
+  public static getCustomCommandsHelpText() {
+    let helpText = '';
+
+    ReplApp.helpMap.forEach((value, key) => {
+      if (value) {
+        helpText += `${key.padEnd(15)}${value}\n`;
+      }
+    });
+
+    return helpText;
+  }
 }
 
 export {
@@ -260,4 +286,5 @@ export {
   CommandLineArgs,
   assert,
   ReplAssert,
+  ReplUtil,
 };
