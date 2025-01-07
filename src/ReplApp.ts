@@ -16,9 +16,7 @@ import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
 import {ReplConfig} from './config/ReplConfig';
 import {ReplUtil} from './ReplUtil';
-import { ScriptPaths } from './Test';
-
-export {ReplUtil} from './ReplUtil';
+import {ScriptPaths} from './Test';
 
 interface LooseObject {
   [key: string]: unknown;
@@ -52,8 +50,21 @@ export class ReplApp {
     },
   };
 
-  static imports = new Map();
+  /**
+   * A static map that holds help descriptions for various commands.
+   * The key is a string representing the command name, and the value is a string
+   * containing the help description for that command.
+   */
+  static helpMap = new Map<string, string>();
 
+  /**
+   * Starts the REPL application.
+   *
+   * @param initFilePaths - An array of file paths to initialize the REPL with.
+   * @param argsConfig - Optional configuration for parsing command line arguments.
+   * @param optionsDescription - Optional description of the available options.
+   * @returns A promise that resolves to `true` if help text is shown, otherwise resolves to the result of starting the REPL or batch REPL.
+   */
   static async start(
     initFilePaths: string[] = [],
     argsConfig?: ParseArgsConfig,
@@ -113,7 +124,6 @@ export class ReplApp {
     initFileContents: LooseObject,
     args: ReplAppArgs
   ) {
-    console.log(args);
     const files = ReplApp.getFiles(args.scriptPaths);
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
@@ -139,9 +149,37 @@ export class ReplApp {
 
     Object.keys(initFileContents).forEach(k => {
       replServer.context[k] = initFileContents[k];
+      ReplApp.helpMap.set(k, ReplUtil.getHelpText(replServer.context[k]));
+      // console.log(`${k}: `, ReplUtil.getHelpText(replServer.context[k]));
     });
 
+    ReplApp.defineCustomCommands(replServer);
     return [replServer];
+  }
+
+  public static defineCustomCommands(
+    replServer: repl.REPLServer,
+    imports: Map<string, repl.REPLCommand> = new Map()
+  ) {
+    replServer.defineCommand('lc', {
+      help: 'List all available commands for automation',
+      action() {
+        console.log('Available commands: ');
+        this.displayPrompt();
+      },
+    });
+
+    replServer.defineCommand('clear', {
+      help: 'Clear the screen',
+      action() {
+        process.stdout.write('\u001B[2J\u001B[0;0f');
+        this.displayPrompt();
+      },
+    });
+
+    imports.forEach((value, key) => {
+      replServer.defineCommand(key, value);
+    });
   }
 
   static async getInitFileContents(initFileName: string): Promise<LooseObject> {
@@ -219,6 +257,27 @@ export class ReplApp {
 
     return files.flat();
   }
+
+  /**
+   * Retrieves the help map for the REPL application.
+   *
+   * @returns {Map<string, string>} A map where the keys are command names and the values are their descriptions.
+   */
+  static getHelpMap() {
+    return ReplApp.helpMap;
+  }
+
+  public static getCustomCommandsHelpText() {
+    let helpText = '';
+
+    ReplApp.helpMap.forEach((value, key) => {
+      if (value) {
+        helpText += `${key.padEnd(15)}${value}\n`;
+      }
+    });
+
+    return helpText;
+  }
 }
 
 export {
@@ -227,4 +286,5 @@ export {
   CommandLineArgs,
   assert,
   ReplAssert,
+  ReplUtil,
 };
