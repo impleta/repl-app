@@ -17,7 +17,7 @@ class ReplAssert {
   ) {
     const lineNumber = ReplAssert.getLineNumber(e);
     const msg = `Failed!: ${assertion}: line ${lineNumber}`;
-    console.log(chalk.red(`msg: ${msg}`));
+    // console.log(chalk.red(`msg: ${msg}`));
     // console.log(chalk.red(`e: ${JSON.stringify(e)}`));
 
     if (report) {
@@ -25,7 +25,7 @@ class ReplAssert {
         msg: e.message,
         assertionText: assertion,
         success: false,
-        lineNumber: lineNumber,
+        lineNumber: isNaN(lineNumber) ? 1 : lineNumber,
         error: e,
       });
     }
