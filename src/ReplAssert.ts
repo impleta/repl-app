@@ -25,7 +25,7 @@ class ReplAssert {
         msg: e.message,
         assertionText: assertion,
         success: false,
-        lineNumber: lineNumber,
+        lineNumber: isNaN(lineNumber) ? 1 : lineNumber,
         error: e,
       });
     }
@@ -67,7 +67,7 @@ class ReplAssert {
                 ReplAssert.failureMessageHandler(
                   reconstructedAssertion,
                   e as Error,
-                  report,
+                  report
                 );
               }
             },

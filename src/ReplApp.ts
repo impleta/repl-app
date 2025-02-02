@@ -17,10 +17,13 @@ import {TestRunner} from './TestRunner';
 import {ReplConfig} from './config/ReplConfig';
 import {ReplUtil} from './ReplUtil';
 import {ScriptPaths} from './Test';
+import {Container} from 'typedi';
 
 interface LooseObject {
   [key: string]: unknown;
 }
+
+export type CallOnExitType = (args?: unknown) => void;
 
 export class ReplApp {
   static replArgsConfig: ParseArgsConfig = {
@@ -56,6 +59,8 @@ export class ReplApp {
    * containing the help description for that command.
    */
   static helpMap = new Map<string, string>();
+
+  static callOnExit: CallOnExitType | undefined;
 
   /**
    * Starts the REPL application.
@@ -124,6 +129,8 @@ export class ReplApp {
     initFileContents: LooseObject,
     args: ReplAppArgs
   ) {
+    Container.set<CallOnExitType>('CALL-ON-EXIT', ReplApp.callOnExit);
+
     const files = ReplApp.getFiles(args.scriptPaths);
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
@@ -154,6 +161,10 @@ export class ReplApp {
     });
 
     ReplApp.defineCustomCommands(replServer);
+    if (ReplApp.callOnExit) {
+      replServer.on('exit', ReplApp.callOnExit);
+    }
+
     return [replServer];
   }
 
