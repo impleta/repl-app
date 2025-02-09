@@ -1,6 +1,7 @@
 import {assert} from 'chai';
 import chalk from 'chalk';
 import {TestReport} from './TestReport';
+import {ReplUtil} from './ReplUtil';
 
 type AssertStatic = typeof assert;
 
@@ -17,7 +18,12 @@ class ReplAssert {
   ) {
     const lineNumber = ReplAssert.getLineNumber(e);
     const msg = `Failed!: ${assertion}: line ${lineNumber}`;
-    // console.log(chalk.red(`msg: ${msg}`));
+    //console.log(chalk.red(`msg: ${msg}`));
+    ReplUtil.logErrorMessage(`msg: ${msg}`);
+    const lineNumberAvailable = !isNaN(lineNumber); 
+    if (!lineNumberAvailable) {
+      console.log(chalk.red(e.stack));
+    }
     // console.log(chalk.red(`e: ${JSON.stringify(e)}`));
 
     if (report) {
@@ -25,11 +31,12 @@ class ReplAssert {
         msg: e.message,
         assertionText: assertion,
         success: false,
-        lineNumber: isNaN(lineNumber) ? 1 : lineNumber,
+        lineNumber: lineNumberAvailable ? lineNumber : 1,
+        showStackTrace: !lineNumberAvailable,
         error: e,
       });
     }
-
+ 
     return e;
   }
 
