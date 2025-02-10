@@ -267,11 +267,16 @@
     }
 
     .failed-message {
-      cursor: pointer;
       position: relative;
     }
 
-    .failed-message::after {
+    .with-stacktrace {
+      cursor: pointer;
+      color: #e74c3c;
+      text-decoration: underline;
+    }
+
+    .with-stacktrace::after {
       content: "Click to view stacktrace";
       position: absolute;
       bottom: 100%;
@@ -288,7 +293,7 @@
       transition: opacity 0.2s ease, visibility 0.2s ease;
     }
 
-    .failed-message:hover::after {
+    .with-stacktrace:hover::after {
       opacity: 1;
       visibility: visible;
     }
@@ -300,10 +305,15 @@
 </head>
 
 <body>
-  <% function getAssertionResultText(assertionResult) { if(assertionResult.success) { return "<div>&#x200b;</div>" } 
-  let stackTrace='' ; 
-  if(assertionResult.showStackTrace) { stackTrace=`<div class="stacktrace-popup"><button class="close-btn">Close</button><pre>${assertionResult.error.stack}</pre></div>`; }
-    return `<div class="failed-message">Failed! ${assertionResult.msg}</div>${stackTrace}`;
+  <% 
+  function getAssertionResultText(assertionResult) { if(assertionResult.success) { return "<div>&#x200b;</div>" } 
+    let stackTrace= '' ; 
+    let failedMessageClass = 'failed-message';
+    if(assertionResult.showStackTrace) { 
+      failedMessageClass += ' with-stacktrace';
+      stackTrace =`<div class="stacktrace-popup"><button class="close-btn">Close</button><pre>${assertionResult.error.stack}</pre></div>`; 
+    }
+    return `<div class="${failedMessageClass}">Failed! ${assertionResult.msg}</div>${stackTrace}`;
     }
     const codeLines = [];
     const assertionLines = [];
@@ -387,7 +397,7 @@
       });
 
       document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.failed-message').forEach(failedMessage => {
+        document.querySelectorAll('.with-stacktrace').forEach(failedMessage => {
           let stacktraceCell = failedMessage.closest('.cell');
           let stacktracePopup = stacktraceCell.querySelector('.stacktrace-popup'); // Get the sibling popup div
 

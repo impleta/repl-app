@@ -36,7 +36,7 @@ class ReplAssert {
         error: e,
       });
     }
- 
+
     return e;
   }
 
