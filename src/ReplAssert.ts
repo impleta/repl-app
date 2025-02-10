@@ -41,8 +41,8 @@ class ReplAssert {
   }
 
   static getLineNumber(e: Error): number {
-    const matches = e.stack?.match(/at repl-app-script:(\d+):/);
-    return Number(matches?.[1]);
+    const matches = e.stack?.match(/at (async\s+)?repl-app-script:(\d+):/);
+    return Number(matches?.[2]);
   }
 
   /**
