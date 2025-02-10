@@ -1,67 +1,19 @@
-# REPL Application
+# repl-app
 
-This project is a REPL (Read-Eval-Print Loop) application with custom commands and a web automation component using Playwright.
+## Overview
+`repl-app` is a module designed to build custom Read-Eval-Print Loop (REPL) environments. It allows users to interactively execute commands, evaluate expressions, and see results in real-time.
 
-## Table of Contents
-
-- [Installation](#installation)
-- [Usage](#usage)
-- [Commands](#commands)
-- [Web Automation](#web-automation)
-- [Contributing](#contributing)
-- [License](#license)
+## Features
+- Coming soon!
 
 ## Installation
-
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/yourusername/repl-app.git
-    cd repl-app
-    ```
-
-2. Install the dependencies:
-    ```sh
-    npm install
-    ```
+Coming soon!
 
 ## Usage
-
-To start the REPL application, run:
-```sh
-npm start
-```
-
-### Custom Commands
-
-The REPL application supports custom commands. You can view the list of available commands by typing `.help` in the REPL.
-
-### Example Commands
-
-- `myCommand`: This is a custom command.
-- `anotherCommand`: This is another custom command.
-
-## Web Automation
-
-This project uses Playwright for web automation. The `WebApplication` class provides methods to initialize a browser, open new pages, and close the browser.
-
-### Example Usage
-
-```typescript
-import { WebApplication } from './src/WebApplication';
-
-(async () => {
-  const app = new WebApplication();
-  await app.initialize();
-  const page = await app.newPage('https://example.com');
-  // Perform actions on the page
-  await app.close();
-})();
-```
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request.
+Coming soon!
 
 ## License
-
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+For any questions or feedback, please open an issue on GitHub or contact us at support@repl-app.com.
