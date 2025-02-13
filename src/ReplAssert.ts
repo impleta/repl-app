@@ -24,7 +24,7 @@ class ReplAssert {
     if (!lineNumberAvailable) {
       console.log(chalk.red(e.stack));
     }
-    // console.log(chalk.red(`e: ${JSON.stringify(e)}`));
+    const isAssertionError = e.stack?.startsWith('AssertionError:');
 
     if (report) {
       report.addAssertionResult({
@@ -32,7 +32,7 @@ class ReplAssert {
         assertionText: assertion,
         success: false,
         lineNumber: lineNumberAvailable ? lineNumber : 1,
-        showStackTrace: !lineNumberAvailable,
+        showStackTrace: !isAssertionError,
         error: e,
       });
     }

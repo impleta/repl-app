@@ -40,6 +40,7 @@ export class TestRunner {
     const promises = this.files.map(async (f: ScriptPaths) => {
       const test = new Test(f);
       const context = vm.createContext({console, ...this.context});
+
       return await test.run(context, this.linker);
     });
 

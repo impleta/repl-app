@@ -54,12 +54,16 @@ export class Test {
 
       console.log(`Running ${this.filePath}`);
       const startTime = Date.now();
+
       await scriptModule.evaluate();
+
       const endTime = Date.now();
       this.testReport.runTime = endTime - startTime;
     } catch (error) {
       ReplAssert.failureMessageHandler('', error as Error, this.testReport);
+      console.log('Error running test:', error);
     }
+
     return this.testReport;
   }
 }
