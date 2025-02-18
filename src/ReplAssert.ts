@@ -1,6 +1,7 @@
 import {assert} from 'chai';
 import chalk from 'chalk';
 import {TestReport} from './TestReport';
+import {ReplUtil} from './ReplUtil';
 
 type AssertStatic = typeof assert;
 
@@ -17,15 +18,21 @@ class ReplAssert {
   ) {
     const lineNumber = ReplAssert.getLineNumber(e);
     const msg = `Failed!: ${assertion}: line ${lineNumber}`;
-    console.log(chalk.red(`msg: ${msg}`));
-    // console.log(chalk.red(`e: ${JSON.stringify(e)}`));
+    //console.log(chalk.red(`msg: ${msg}`));
+    ReplUtil.logErrorMessage(`msg: ${msg}`);
+    const lineNumberAvailable = !isNaN(lineNumber); 
+    if (!lineNumberAvailable) {
+      console.log(chalk.red(e.stack));
+    }
+    const isAssertionError = e.stack?.startsWith('AssertionError:');
 
     if (report) {
       report.addAssertionResult({
         msg: e.message,
         assertionText: assertion,
         success: false,
-        lineNumber: isNaN(lineNumber) ? 1 : lineNumber,
+        lineNumber: lineNumberAvailable ? lineNumber : 1,
+        showStackTrace: !isAssertionError,
         error: e,
       });
     }
@@ -34,8 +41,8 @@ class ReplAssert {
   }
 
   static getLineNumber(e: Error): number {
-    const matches = e.stack?.match(/at repl-app-script:(\d+):/);
-    return Number(matches?.[1]);
+    const matches = e.stack?.match(/at (async\s+)?repl-app-script:(\d+):/);
+    return Number(matches?.[2]);
   }
 
   /**

@@ -6,6 +6,7 @@ export type AssertionResult = {
   assertionText: string;
   success: boolean;
   lineNumber?: number;
+  showStackTrace?: boolean;
   error?: Error;
 };
 

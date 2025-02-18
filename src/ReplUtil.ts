@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import {fileURLToPath} from 'url';
 import Path from 'path';
+import chalk from 'chalk';
 
 /**
  * A utility class for various REPL (Read-Eval-Print Loop) operations.
@@ -140,5 +141,9 @@ export class ReplUtil {
    */
   static hasHelpText(target: Object, propertyKey?: string): boolean {
     return !!ReplUtil.getHelpText(target, propertyKey);
+  }
+
+  static logErrorMessage(message: string) {
+    console.error(chalk.red(message));
   }
 }
