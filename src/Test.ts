@@ -6,7 +6,6 @@ import {Container} from 'typedi';
 import {CallOnExitType} from './ReplApp';
 
 export type ScriptPaths = {fullPath: string; shortPath: string};
-export type ScriptPaths = {fullPath: string; shortPath: string};
 
 /**
  * The `Test` class is responsible for running a test script in a given context and capturing the test report.
@@ -37,7 +36,7 @@ export class Test {
   async run(context: vm.Context, linker: vm.ModuleLinker): Promise<TestReport> {
     try {
       try {
-      const fileContents = await fs.promises.readFile(this.filePath, 'utf-8');
+        const fileContents = await fs.promises.readFile(this.filePath, 'utf-8');
         this.testReport.testContent = fileContents;
 
         // Override the current assert definition with a test-specific instance
@@ -60,28 +59,19 @@ export class Test {
 
         console.log(`Running ${this.filePath}`);
         const startTime = Date.now();
-  
-      await scriptModule.evaluate();
 
-      const callOnExit = Container.get<CallOnExitType>('CALL-ON-EXIT');
-      if (callOnExit) {
-        callOnExit();
-      }
+        await scriptModule.evaluate();
 
-  
-      const endTime = Date.now();
+        const callOnExit = Container.get<CallOnExitType>('CALL-ON-EXIT');
+        if (callOnExit) {
+          callOnExit();
+        }
+
+        const endTime = Date.now();
         this.testReport.runTime = endTime - startTime;
-    } catch (error) {
-      ReplAssert.failureMessageHandler('', error as Error, this.testReport);
-      /* const assertionResult = {
-        msg: 'An unknown error occurred',
-        assertionText: (error as Error).message,
-        success: false,
-        error: error as Error,
-      };
-
-      this.testReport.addAssertionResult(assertionResult); */
-    }
+      } catch (error) {
+        ReplAssert.failureMessageHandler('', error as Error, this.testReport);
+      }
     } catch (error) {
       ReplAssert.failureMessageHandler('', error as Error, this.testReport);
       console.log('Error running test:', error);
