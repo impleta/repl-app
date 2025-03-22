@@ -278,14 +278,24 @@ export class ReplApp {
     return ReplApp.helpMap;
   }
 
-  public static getCustomCommandsHelpText() {
+  // TODO: pass an optional argument for retrieving hte help text. 
+  public static getCustomCommandsHelpText(arg?: string) {
     let helpText = '';
-
-    ReplApp.helpMap.forEach((value, key) => {
-      if (value) {
-        helpText += `${key.padEnd(15)}${value}\n`;
+    // console.log('Custom Commands:', ReplApp.helpMap);
+    if (!arg) {
+      ReplApp.helpMap.forEach((value, key) => {
+        if (value) {
+          helpText += `${key.padEnd(15)}${value}\n`;
+        }
+      });
+    } else {
+      // TODO: Should also work for nested properties, e.g. `instance.variable`
+      if (ReplApp.helpMap.has(arg)) {
+        helpText += `${arg.padEnd(15)}${ReplApp.helpMap.get(arg)}\n`;
+      } else {
+        helpText += `No help available for ${arg}\n`;
       }
-    });
+    }
 
     return helpText;
   }
