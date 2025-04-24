@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as repl from 'repl';
 import * as fs from 'fs';
 import chalk from 'chalk';
-import glob from 'glob';
+import {glob} from 'glob';
 import Path from 'path';
 import {pathToFileURL} from 'url';
 import {
@@ -17,7 +17,6 @@ import {TestRunner} from './TestRunner';
 import {ReplConfig} from './config/ReplConfig';
 import {ReplUtil} from './ReplUtil';
 import {ScriptPaths} from './Test';
-import {Container} from 'typedi';
 
 interface LooseObject {
   [key: string]: unknown;
@@ -129,11 +128,13 @@ export class ReplApp {
     initFileContents: LooseObject,
     args: ReplAppArgs
   ) {
-    Container.set<CallOnExitType>('CALL-ON-EXIT', ReplApp.callOnExit);
-
     const files = ReplApp.getFiles(args.scriptPaths);
     const runner = new TestRunner(files, initFileContents);
     const result = await runner.run();
+
+    if (ReplApp.callOnExit) {
+      ReplApp.callOnExit();
+    }
 
     if (result.succeeded) {
       console.log(chalk.yellow('All tests succeeded!'));

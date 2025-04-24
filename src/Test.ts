@@ -2,7 +2,6 @@ import * as vm from 'vm';
 import * as fs from 'fs';
 import {ReplAssert} from './ReplAssert';
 import {TestReport} from './TestReport';
-import {Container} from 'typedi';
 import {CallOnExitType} from './ReplApp';
 
 export type ScriptPaths = {fullPath: string; shortPath: string};
@@ -61,11 +60,6 @@ export class Test {
         const startTime = Date.now();
 
         await scriptModule.evaluate();
-
-        const callOnExit = Container.get<CallOnExitType>('CALL-ON-EXIT');
-        if (callOnExit) {
-          callOnExit();
-        }
 
         const endTime = Date.now();
         this.testReport.runTime = endTime - startTime;
