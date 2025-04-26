@@ -11,12 +11,14 @@ import {
   ReplAppArgs,
 } from './CommandLineArgsParser';
 
-import {ParseArgsConfig} from 'util';
 import {ReplAssert, assert} from './ReplAssert';
 import {TestRunner} from './TestRunner';
 import {ReplConfig} from './config/ReplConfig';
 import {ReplUtil} from './ReplUtil';
 import {ScriptPaths} from './Test';
+import {ExtendedParseArgsOptionsConfig} from './ParseArgsOptionsConfig';
+import columnify from 'columnify';
+import {replArgsConfig} from './ReplArgsConfig';
 
 interface LooseObject {
   [key: string]: unknown;
@@ -25,32 +27,7 @@ interface LooseObject {
 export type CallOnExitType = (args?: unknown) => void;
 
 export class ReplApp {
-  static replArgsConfig: ParseArgsConfig = {
-    options: {
-      initFile: {
-        type: 'string',
-        multiple: true,
-      },
-      configFile: {
-        type: 'string',
-      },
-      'report.generate': {
-        type: 'boolean',
-      },
-      'report.folder': {
-        type: 'string',
-      },
-      'report.filePath': {
-        type: 'string',
-      },
-      'get-config': {
-        type: 'string',
-      },
-      'set-config': {
-        type: 'string',
-      },
-    },
-  };
+  static replArgsConfig = replArgsConfig;
 
   /**
    * A static map that holds help descriptions for various commands.
@@ -71,8 +48,7 @@ export class ReplApp {
    */
   static async start(
     initFilePaths: string[] = [],
-    argsConfig?: ParseArgsConfig,
-    optionsDescription?: {[option: string]: string}
+    argsConfig?: ExtendedParseArgsOptionsConfig
   ) {
     argsConfig = ReplUtil.merge(argsConfig, ReplApp.replArgsConfig);
 
@@ -90,7 +66,7 @@ export class ReplApp {
 
     // TODO: This belongs in the actual repls, not in repl-app
     if (cmdLineArgs.parsedArgs.values['help'] as string) {
-      ReplApp.showHelpText(optionsDescription);
+      ReplApp.showHelpText(argsConfig);
       return true;
     }
 
@@ -114,12 +90,27 @@ export class ReplApp {
   }
 
   static showHelpText(
-    optionDescriptions: {[option: string]: string} | undefined
+    optionDescriptions: ExtendedParseArgsOptionsConfig | undefined
   ) {
+    console.log('Usage: repl-app [options]');
+    console.log('\nOptions:');
     if (optionDescriptions) {
-      Object.entries(optionDescriptions).forEach(([option, description]) => {
-        console.log(`  --${option}\t${description}`);
-      });
+      const rows = Object.entries(optionDescriptions.options).map(
+        ([option, config]) => ({
+          Option: `--${option}`,
+          Description: (config as {description?: string}).description || '',
+        })
+      );
+
+      console.log(
+        columnify(rows, {
+          columnSplitter: '  ',
+          config: {
+            Option: {minWidth: 20},
+            Description: {maxWidth: 60},
+          },
+        })
+      );
     }
   }
 
@@ -279,7 +270,7 @@ export class ReplApp {
     return ReplApp.helpMap;
   }
 
-  // TODO: pass an optional argument for retrieving hte help text. 
+  // TODO: pass an optional argument for retrieving hte help text.
   public static getCustomCommandsHelpText(arg?: string) {
     let helpText = '';
     // console.log('Custom Commands:', ReplApp.helpMap);
