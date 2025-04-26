@@ -16,7 +16,7 @@ import {TestRunner} from './TestRunner';
 import {ReplConfig} from './config/ReplConfig';
 import {ReplUtil} from './ReplUtil';
 import {ScriptPaths} from './Test';
-import {ExtendedParseArgsOptionsConfig} from './ParseArgsOptionsConfig';
+import {ExtendedParseArgsConfig} from './ExtendedParseArgsConfig';
 import columnify from 'columnify';
 import {replArgsConfig} from './ReplArgsConfig';
 
@@ -38,6 +38,8 @@ export class ReplApp {
 
   static callOnExit: CallOnExitType | undefined;
 
+  static appName = 'repl-app';
+
   /**
    * Starts the REPL application.
    *
@@ -48,7 +50,7 @@ export class ReplApp {
    */
   static async start(
     initFilePaths: string[] = [],
-    argsConfig?: ExtendedParseArgsOptionsConfig
+    argsConfig?: ExtendedParseArgsConfig
   ) {
     argsConfig = ReplUtil.merge(argsConfig, ReplApp.replArgsConfig);
 
@@ -89,10 +91,8 @@ export class ReplApp {
     }
   }
 
-  static showHelpText(
-    optionDescriptions: ExtendedParseArgsOptionsConfig | undefined
-  ) {
-    console.log('Usage: repl-app [options]');
+  static showHelpText(optionDescriptions: ExtendedParseArgsConfig | undefined) {
+    console.log(`Usage: ${ReplApp.appName} [options]`);
     console.log('\nOptions:');
     if (optionDescriptions) {
       const rows = Object.entries(optionDescriptions.options).map(
@@ -297,6 +297,7 @@ export {
   ReplAppArgs,
   CommandLineArgsParser,
   CommandLineArgs,
+  ExtendedParseArgsConfig,
   assert,
   ReplAssert,
   ReplUtil,

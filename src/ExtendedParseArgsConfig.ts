@@ -1,6 +1,6 @@
 import {ParseArgsConfig} from 'util';
 
-export interface ExtendedParseArgsOptionsConfig extends ParseArgsConfig {
+export interface ExtendedParseArgsConfig extends ParseArgsConfig {
   options: {
     [key: string]: {
       type: 'string' | 'boolean';

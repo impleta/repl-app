@@ -1,6 +1,6 @@
-import {ExtendedParseArgsOptionsConfig} from './ParseArgsOptionsConfig';
+import {ExtendedParseArgsConfig} from './ExtendedParseArgsConfig';
 
-export const replArgsConfig: ExtendedParseArgsOptionsConfig = {
+export const replArgsConfig: ExtendedParseArgsConfig = {
   options: {
     initFile: {
       type: 'string',
@@ -13,8 +13,7 @@ export const replArgsConfig: ExtendedParseArgsOptionsConfig = {
     },
     'report.generate': {
       type: 'boolean',
-      description:
-        'Generate a report after execution. Generate a report after execution. Generate a report after execution. Generate a report after execution. Generate a report after execution. Generate a report after execution.',
+      description: 'Generate a report after execution.',
     },
     'report.folder': {
       type: 'string',
